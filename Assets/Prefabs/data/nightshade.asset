@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91c8b8a70d2742f4ab93b8fedb86defe, type: 3}
+  m_Name: nightshade
+  m_EditorClassIdentifier: 
+  itemName: Nightshade
+  itemIcon: {fileID: 21300000, guid: 8cad3521dfb588e48b9ddbf82c96188d, type: 3}
+  itemPrefab: {fileID: 5263229783944699635, guid: a5c6447812e541d43a6ac065b231a82a, type: 3}
+  maxStackSize: 99
+  herbLargeImage: {fileID: 0}
+  description: 
+  growthLocation: 

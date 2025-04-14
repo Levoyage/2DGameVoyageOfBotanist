@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91c8b8a70d2742f4ab93b8fedb86defe, type: 3}
+  m_Name: Mustard
+  m_EditorClassIdentifier: 
+  itemName: Mustard
+  itemIcon: {fileID: 21300000, guid: 0ab08cf4a28ef844b8babfc42334dc22, type: 3}
+  itemPrefab: {fileID: 2884411436968246601, guid: 1e54f126a701bc74294045a58c944a39, type: 3}
+  maxStackSize: 99
+  herbLargeImage: {fileID: 0}
+  description: 
+  growthLocation: 
