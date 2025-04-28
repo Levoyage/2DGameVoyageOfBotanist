@@ -34,8 +34,8 @@ public class TreatmentManager : MonoBehaviour
     public Image failureImage;
 
     [Header("Celebration Effect")]
-    public List<GameObject> confettiPrefabs; // ✅支持多个纸片Prefab
-    public GameObject confettiCanvas; // ✅Canvas目标挂在Inspector上
+    public List<GameObject> confettiPrefabs; // support multiple prefabs
+    public GameObject confettiCanvas; // canvas to spawn confetti on
 
     void Start()
     {

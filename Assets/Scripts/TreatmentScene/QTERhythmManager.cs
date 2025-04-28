@@ -26,9 +26,18 @@ public class QTERhythmManager : MonoBehaviour
 
     private bool[] promptSuccess;
 
+    [Header("Audio")]
+    public AudioClip keyHitSound;   // ✅ 单次正确按键
+    public AudioClip successSound;  // ✅ 成功完成QTE
+    public AudioClip failSound;     // ✅ 失败（按错/超时）
+    private AudioSource audioSource;
+
     void Start()
     {
         HideAllPrompts();
+
+        // 自动添加 AudioSource
+        audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     public void StartQTE()
@@ -37,7 +46,7 @@ public class QTERhythmManager : MonoBehaviour
         timer = 0f;
         qteActive = true;
 
-        promptSuccess = new bool[prompts.Count]; // initialize the array based on the number of prompts
+        promptSuccess = new bool[prompts.Count];
         for (int i = 0; i < promptSuccess.Length; i++)
             promptSuccess[i] = false;
 
@@ -64,6 +73,10 @@ public class QTERhythmManager : MonoBehaviour
             {
                 Debug.Log($"[QTE] Correct key {keySequence[currentPromptIndex]}");
                 MarkPromptSuccess(currentPromptIndex);
+
+                // ✅ 播放按键音
+                PlaySound(keyHitSound);
+
                 currentPromptIndex++;
 
                 if (currentPromptIndex >= keySequence.Count)
@@ -98,15 +111,9 @@ public class QTERhythmManager : MonoBehaviour
             Image img = prompts[i].GetComponent<Image>();
 
             if (promptSuccess[i])
-            {
-                // if the prompt was already successful, keep it green
                 img.color = Color.green;
-            }
             else
-            {
-                // if the prompt is the current one, highlight it
                 img.color = (i == index) ? Color.yellow : Color.white;
-            }
         }
     }
 
@@ -118,7 +125,7 @@ public class QTERhythmManager : MonoBehaviour
             if (img != null)
                 img.color = Color.green;
 
-            promptSuccess[index] = true; //  mark this prompt as successful
+            promptSuccess[index] = true;
         }
     }
 
@@ -150,10 +157,17 @@ public class QTERhythmManager : MonoBehaviour
 
         Debug.Log(success ? "[QTE] SUCCESS" : "[QTE] FAIL");
 
+        // ✅ 播放成功或失败的音效
         if (success)
+        {
+            PlaySound(successSound);
             onQTESuccess?.Invoke();
+        }
         else
+        {
+            PlaySound(failSound);
             onQTEFail?.Invoke();
+        }
     }
 
     public void ResetQTE()
@@ -166,4 +180,13 @@ public class QTERhythmManager : MonoBehaviour
         currentPromptIndex = 0;
         timer = 0f;
     }
+
+    void PlaySound(AudioClip clip)
+    {
+        if (clip != null)
+        {
+            AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position, 1f);
+        }
+    }
+
 }
