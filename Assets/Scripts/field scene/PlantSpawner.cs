@@ -12,7 +12,7 @@ public class PlantSpawner : MonoBehaviour
     public Vector2 mapOffset = Vector2.zero;
 
     public int spawnSafeRadius = 4; // Minimum distance from the player spawn point
-    public int pimpernelMinDistance = 20; // ✅ NEW: pimpernel must be this far from player
+    public int pimpernelMinDistance = 20; // ✅ pimpernel must be this far from player
 
     void Start()
     {
@@ -21,6 +21,8 @@ public class PlantSpawner : MonoBehaviour
 
     public void SpawnPlants()
     {
+        ClearOldPlants(); // ✅ 清除之前生成的植物
+
         if (mapGenerator.mapData == null)
         {
             Debug.LogError("[PlantSpawner] Map data is null! Make sure MapGenerator ran first.");
@@ -65,7 +67,7 @@ public class PlantSpawner : MonoBehaviour
             {
                 Vector2Int pos = GetSafeRandomPosition(distantPositions);
                 Vector3 worldPos = ToWorldPosition(pos);
-                Instantiate(pimpernelPrefab, worldPos, Quaternion.identity);
+                Instantiate(pimpernelPrefab, worldPos, Quaternion.identity, transform);
                 possiblePositions.Remove(pos); // 🚫 avoid reuse
                 Debug.Log("[PlantSpawner] Guaranteed pimpernel at " + worldPos);
             }
@@ -87,10 +89,19 @@ public class PlantSpawner : MonoBehaviour
             Vector2Int pos = GetSafeRandomPosition(possiblePositions);
             GameObject prefab = filteredPrefabs[Random.Range(0, filteredPrefabs.Count)];
             Vector3 worldPos = ToWorldPosition(pos);
-            Instantiate(prefab, worldPos, Quaternion.identity);
+            Instantiate(prefab, worldPos, Quaternion.identity, transform);
         }
 
         Debug.Log($"[PlantSpawner] Total plants spawned: {spawnCount + 1} (safe radius: {spawnSafeRadius}, pimpernelDist: {pimpernelMinDistance})");
+    }
+
+    // ✅ 清除旧植物对象
+    public void ClearOldPlants()
+    {
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
     }
 
     private GameObject FindPrefabByName(string name)

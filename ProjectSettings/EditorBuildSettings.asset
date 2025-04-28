@@ -14,10 +14,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/FieldScene.unity
     guid: 908aea03845f52c478d735ed10dac2de
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Main Scene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
     path: Assets/Scenes/IntroScene.unity
     guid: d40cd4bbaba58a74ea7b1a5f1b0a90b3
+  - enabled: 1
+    path: Assets/Scenes/TreatmentScene.unity
+    guid: a045df279dd7f2f4f81f6d12d1e0a187
   m_configObjects: {}

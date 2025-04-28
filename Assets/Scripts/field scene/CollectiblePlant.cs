@@ -59,6 +59,8 @@ public class CollectiblePlant : MonoBehaviour
                     inventory.AddPlant(plantData);
                 }
 
+                GameStateManager.Instance.collectedPlant = plantData; // Store in GameStateManager in case of treatment
+
                 if (pickupSound != null)
                 {
                     AudioSource.PlayClipAtPoint(pickupSound, transform.position, pickupVolume);

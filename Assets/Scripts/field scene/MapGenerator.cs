@@ -31,7 +31,7 @@ public class MapGenerator : MonoBehaviour
     }
 
 
-// ... 你的 using 和 class 保持不变
+    // ... 你的 using 和 class 保持不变
 
     public void GenerateMap()
     {
@@ -146,7 +146,7 @@ public class MapGenerator : MonoBehaviour
         }
 
         // ✅ Step 10: Final spawn safety check — ensure spawn has sufficient open space
-        if (!IsSpawnPointTrulyFree(playerSpawnPoint, 90))
+        if (!IsSpawnPointTrulyFree(playerSpawnPoint, 100))
         {
             Debug.LogWarning("[SpawnCheck] Spawn area too constrained — regenerating map...");
             GenerateMap();
@@ -157,7 +157,7 @@ public class MapGenerator : MonoBehaviour
         Debug.Log($"Spawn point tileID = {mapData[playerSpawnPoint.x, playerSpawnPoint.y]}");
     }
 
-    // ✅ 新增函数：检测某点可通区域大小
+    // Check if spawn point is truly free
     private bool IsSpawnPointTrulyFree(Vector2Int spawnPoint, int minReachableTiles = 100)
     {
         HashSet<Vector2Int> reachable = FloodFillFrom(spawnPoint);

@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI taskDisplay;
     public Button startButton;
     public Button restartButton;
+    public Button treatButton;
 
     public GameObject player;
     private PlayerInventory playerInventory;
@@ -22,7 +23,8 @@ public class GameManager : MonoBehaviour
 
     public MapGenerator mapGenerator;
     public TileManager tileManager;
-    public PlantSpawner plantSpawner; // ✅ NEW: Reference to plant spawner
+    public PlantSpawner plantSpawner;
+    public SnakeSpawner snakeSpawner;
 
     private Vector3 playerInitialPosition;
 
@@ -219,6 +221,12 @@ public class GameManager : MonoBehaviour
         {
             resultText.text = "Congratulations!\nYou have successfully gathered the plant!";
             PlaySound(successMusic);
+
+            treatButton.gameObject.SetActive(true); // ✅ 显示治疗按钮
+            restartButton.gameObject.SetActive(false); // ✅ 隐藏重启按钮
+
+            treatButton.onClick.RemoveAllListeners();
+            treatButton.onClick.AddListener(GoToTreatment); // 替换为你的处理函数
         }
         else
         {
@@ -231,6 +239,8 @@ public class GameManager : MonoBehaviour
                 resultText.text = "You ran out of lives!\nYou failed to gather the plant.";
             }
             PlaySound(failureMusic);
+
+            restartButton.gameObject.SetActive(true);
         }
 
         foreach (var snake in FindObjectsOfType<SnakeController>())
@@ -239,7 +249,6 @@ public class GameManager : MonoBehaviour
                 snake.canMove = false;
         }
 
-        restartButton.gameObject.SetActive(true);
     }
 
     void RestartGame()
@@ -251,9 +260,12 @@ public class GameManager : MonoBehaviour
         if (tileManager != null)
             tileManager.RefreshTiles();
 
-        // ✅ Step 2: regenerate plants
+        // ✅ Step 2: regenerate plants & snakes
         if (plantSpawner != null)
             plantSpawner.SpawnPlants();
+
+        if (snakeSpawner != null)
+            snakeSpawner.SpawnSnakes();
 
         // ✅ Step 3: update player spawn point
         Vector2Int spawn = mapGenerator.playerSpawnPoint;
@@ -306,4 +318,11 @@ public class GameManager : MonoBehaviour
         timerText.color = originalColor;
         timerText.transform.localScale = originalScale;
     }
+
+    public void GoToTreatment()
+    {
+        // save the current game state if needed
+        UnityEngine.SceneManagement.SceneManager.LoadScene("TreatmentScene");
+    }
+
 }

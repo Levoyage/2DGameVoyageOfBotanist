@@ -117,5 +117,35 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    public void AddItem(ItemData item)
+    {
+        if (item == null)
+        {
+            Debug.LogWarning("[Inventory] Tried to add null item.");
+            return;
+        }
+
+        SlotData slot = FindSlotForItem(item);
+        if (slot != null)
+        {
+            slot.quantity++;
+        }
+        else
+        {
+            foreach (var s in slots)
+            {
+                if (s.IsEmpty())
+                {
+                    s.item = item;
+                    s.quantity = 1;
+                    break;
+                }
+            }
+        }
+
+        UpdateInventoryUI();
+        Debug.Log($"[Inventory] Added item: {item.itemName}");
+    }
+
 
 }
