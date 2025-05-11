@@ -7,15 +7,19 @@ public class QTERhythmManager : MonoBehaviour
 {
     public List<GameObject> prompts;
     public List<KeyCode> keySequence = new List<KeyCode>
-    {
-        KeyCode.UpArrow,
-        KeyCode.UpArrow,
-        KeyCode.RightArrow,
-        KeyCode.DownArrow,
-        KeyCode.Return
-    };
+        {
+            KeyCode.UpArrow,
+            KeyCode.UpArrow,
+            KeyCode.RightArrow,
+            KeyCode.DownArrow,
+            KeyCode.LeftArrow,
+            KeyCode.DownArrow,
+            KeyCode.LeftShift,
+            KeyCode.Return
+        };
 
-    public float totalQTETime = 3f;
+
+    public float totalQTETime = 8f;
     private int currentPromptIndex = 0;
     private bool qteActive = false;
     private float timer = 0f;

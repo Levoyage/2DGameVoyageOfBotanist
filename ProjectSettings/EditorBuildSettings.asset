@@ -23,4 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TreatmentScene.unity
     guid: a045df279dd7f2f4f81f6d12d1e0a187
+  - enabled: 1
+    path: Assets/Scenes/PostTreatmentScene.unity
+    guid: 58b327d77e6812643a318eee600eb934
   m_configObjects: {}

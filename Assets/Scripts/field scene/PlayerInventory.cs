@@ -1,13 +1,15 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+
+
 public class PlayerInventory : MonoBehaviour
 {
-    public GameObject inventoryUI;         // Inventory UI 面板（可控制开关）
-    public Transform slotGrid;             // Slot 容器（包含所有 SlotLight）
+    public GameObject inventoryUI;         // Inventory UI panel (can be toggled)
+    public Transform slotGrid;             // Slot container (contains all SlotLight)
 
-    public List<SlotData> slots = new List<SlotData>(); // 储存格子数据
-    private BackPackUI backpackUI;                      // 背包 UI 管理器
+    public List<SlotData> slots = new List<SlotData>(); // Store slot data
+    private BackPackUI backpackUI;                      // Backpack UI manager
 
     void Start()
     {
@@ -16,20 +18,20 @@ public class PlayerInventory : MonoBehaviour
     }
 
     /// <summary>
-    /// 初始化所有空格子
+    /// Initialize all empty slots
     /// </summary>
     private void InitializeSlots()
     {
         slots.Clear();
 
-        for (int i = 0; i < 24; i++) // 默认 24 个背包格子
+        for (int i = 0; i < 24; i++) // Default 24 backpack slots
         {
             slots.Add(new SlotData(null, 0));
         }
     }
 
     /// <summary>
-    /// 添加植物
+    /// Add plant
     /// </summary>
     public void AddPlant(ItemData plant)
     {
@@ -63,7 +65,7 @@ public class PlayerInventory : MonoBehaviour
     }
 
     /// <summary>
-    /// 查找已有植物对应的 Slot
+    /// Find the slot for an existing plant
     /// </summary>
     private SlotData FindSlotForItem(ItemData plant)
     {
@@ -78,7 +80,7 @@ public class PlayerInventory : MonoBehaviour
     }
 
     /// <summary>
-    /// 获取某种植物的数量
+    /// Get the quantity of a specific plant
     /// </summary>
     public int GetPlantCount(ItemData plant)
     {
@@ -87,7 +89,7 @@ public class PlayerInventory : MonoBehaviour
     }
 
     /// <summary>
-    /// 清空所有背包数据
+    /// Clear all backpack data
     /// </summary>
     public void ClearInventory()
     {
@@ -101,7 +103,7 @@ public class PlayerInventory : MonoBehaviour
     }
 
     /// <summary>
-    /// 更新 UI 上的图标和数量
+    /// Update the icons and quantities on the UI
     /// </summary>
     private void UpdateInventoryUI()
     {

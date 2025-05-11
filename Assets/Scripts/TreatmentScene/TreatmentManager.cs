@@ -19,6 +19,11 @@ public class TreatmentManager : MonoBehaviour
     public Button retryButton;
     public Button continueButton;
 
+    [Header("Instruction")]
+    public GameObject instructionPanel;
+    public TMP_Text instructionText;
+    public Button instructionContinueButton;
+
     [Header("QTE System")]
     public QTEProgressBar qteProgressBar;
     public QTERhythmManager qteRhythmManager;
@@ -34,16 +39,36 @@ public class TreatmentManager : MonoBehaviour
     public Image failureImage;
 
     [Header("Celebration Effect")]
-    public List<GameObject> confettiPrefabs; // support multiple prefabs
-    public GameObject confettiCanvas; // canvas to spawn confetti on
+    public List<GameObject> confettiPrefabs;
+    public GameObject confettiCanvas;
+
+    [Header("Audio")]
+    public AudioClip failSound;
+    private AudioSource audioSource;
+
 
     void Start()
     {
         treatmentPanel.SetActive(false);
         medicineResultPanel.SetActive(false);
 
+        if (instructionPanel != null)
+            instructionPanel.SetActive(false);
+
         if (brewButton != null)
-            brewButton.onClick.AddListener(SwitchToTreatmentPanel);
+            brewButton.onClick.AddListener(() =>
+            {
+                diagnosisPanel.SetActive(false);
+                treatmentPanel.SetActive(true);
+                instructionPanel.SetActive(true);
+                instructionText.text = "Now, choose carefully: grinding or boiling. Once chosen, be ready — your timing matters.";
+            });
+
+        if (instructionContinueButton != null)
+        {
+            instructionContinueButton.onClick.RemoveAllListeners();
+            instructionContinueButton.onClick.AddListener(CloseInstructionPanel);
+        }
 
         if (retryButton != null)
             retryButton.onClick.AddListener(OnRetryClicked);
@@ -53,12 +78,16 @@ public class TreatmentManager : MonoBehaviour
 
         retryButton.gameObject.SetActive(false);
         continueButton.gameObject.SetActive(false);
+
+        audioSource = gameObject.AddComponent<AudioSource>();
+
     }
 
-    public void SwitchToTreatmentPanel()
+    void CloseInstructionPanel()
     {
-        diagnosisPanel.SetActive(false);
-        treatmentPanel.SetActive(true);
+        if (instructionPanel != null)
+            instructionPanel.SetActive(false);
+
         OpenTreatmentPanel();
     }
 
@@ -93,11 +122,18 @@ public class TreatmentManager : MonoBehaviour
         boilButton.interactable = false;
         grindButton.interactable = false;
 
+        if (instructionPanel != null)
+            instructionPanel.SetActive(false);
+
         if (method == "boil")
         {
+            if (failSound != null)
+                audioSource.PlayOneShot(failSound);
+
             HandleMistake(method);
             return;
         }
+
 
         if (qteRhythmManager != null)
         {
@@ -177,8 +213,8 @@ public class TreatmentManager : MonoBehaviour
 
     void ShowNextStep()
     {
-        Debug.Log("[Treatment] Proceeding to next step...");
-        // TODO: Return to ClinicScene
+        Debug.Log("[Treatment] Proceeding to post-treatment scene...");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("PostTreatmentScene");
     }
 
     void SpawnCelebrationEffect()
