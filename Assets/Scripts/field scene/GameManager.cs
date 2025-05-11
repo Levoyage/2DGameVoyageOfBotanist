@@ -174,9 +174,18 @@ public class GameManager : MonoBehaviour
         if (playerInventory != null)
         {
             int collectedPlant = playerInventory.GetPlantCount(requiredPlant);
-            taskDisplay.text = $"{requiredPlant.itemName} x {collectedPlant}";
+
+            if (requiredPlant.itemName.ToLower().Contains("pimpernel"))
+            {
+                taskDisplay.text = $"{requiredPlant.itemName} x {collectedPlant}\n(Look for red flowers!)";
+            }
+            else
+            {
+                taskDisplay.text = $"{requiredPlant.itemName} x {collectedPlant}";
+            }
         }
     }
+
 
     bool CheckForRequiredPlant()
     {

@@ -146,7 +146,7 @@ public class MapGenerator : MonoBehaviour
         }
 
         // ✅ Step 10: Final spawn safety check — ensure spawn has sufficient open space
-        if (!IsSpawnPointTrulyFree(playerSpawnPoint, 100))
+        if (!IsSpawnPointTrulyFree(playerSpawnPoint, 110))
         {
             Debug.LogWarning("[SpawnCheck] Spawn area too constrained — regenerating map...");
             GenerateMap();
