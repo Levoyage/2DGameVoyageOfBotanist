@@ -7,17 +7,16 @@ public class QTERhythmManager : MonoBehaviour
 {
     public List<GameObject> prompts;
     public List<KeyCode> keySequence = new List<KeyCode>
-        {
-            KeyCode.UpArrow,
-            KeyCode.UpArrow,
-            KeyCode.RightArrow,
-            KeyCode.DownArrow,
-            KeyCode.LeftArrow,
-            KeyCode.DownArrow,
-            KeyCode.LeftShift,
-            KeyCode.Return
-        };
-
+    {
+        KeyCode.UpArrow,
+        KeyCode.UpArrow,
+        KeyCode.RightArrow,
+        KeyCode.DownArrow,
+        KeyCode.LeftArrow,
+        KeyCode.DownArrow,
+        KeyCode.LeftShift,
+        KeyCode.Return
+    };
 
     public float totalQTETime = 8f;
     private int currentPromptIndex = 0;
@@ -31,16 +30,14 @@ public class QTERhythmManager : MonoBehaviour
     private bool[] promptSuccess;
 
     [Header("Audio")]
-    public AudioClip keyHitSound;   // ✅ 单次正确按键
-    public AudioClip successSound;  // ✅ 成功完成QTE
-    public AudioClip failSound;     // ✅ 失败（按错/超时）
+    public AudioClip keyHitSound;
+    public AudioClip successSound;
+    public AudioClip failSound;
     private AudioSource audioSource;
 
     void Start()
     {
         HideAllPrompts();
-
-        // 自动添加 AudioSource
         audioSource = gameObject.AddComponent<AudioSource>();
     }
 
@@ -71,29 +68,35 @@ public class QTERhythmManager : MonoBehaviour
         if (progressBar != null)
             progressBar.value = Mathf.Clamp01(timer / totalQTETime);
 
-        if (Input.anyKeyDown && currentPromptIndex < keySequence.Count)
+        if (currentPromptIndex < keySequence.Count)
         {
-            if (Input.GetKeyDown(keySequence[currentPromptIndex]))
+            foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
             {
-                Debug.Log($"[QTE] Correct key {keySequence[currentPromptIndex]}");
-                MarkPromptSuccess(currentPromptIndex);
-
-                // ✅ 播放按键音
-                PlaySound(keyHitSound);
-
-                currentPromptIndex++;
-
-                if (currentPromptIndex >= keySequence.Count)
+                if (Input.GetKeyDown(key))
                 {
-                    EndQTE(true);
-                    return;
+                    if (!IsKeyboardKey(key))
+                        break; // 忽略非键盘按键（如鼠标）
+
+                    if (key == keySequence[currentPromptIndex])
+                    {
+                        Debug.Log($"[QTE] Correct key {key}");
+                        MarkPromptSuccess(currentPromptIndex);
+                        PlaySound(keyHitSound);
+                        currentPromptIndex++;
+
+                        if (currentPromptIndex >= keySequence.Count)
+                        {
+                            EndQTE(true);
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[QTE] Wrong key pressed: {key}");
+                        EndQTE(false);
+                    }
+
+                    break; // 防止多次触发
                 }
-            }
-            else
-            {
-                Debug.LogWarning("[QTE] Wrong key pressed!");
-                EndQTE(false);
-                return;
             }
         }
 
@@ -108,12 +111,24 @@ public class QTERhythmManager : MonoBehaviour
         }
     }
 
+    bool IsKeyboardKey(KeyCode key)
+    {
+        return (key >= KeyCode.A && key <= KeyCode.Z) ||
+               (key >= KeyCode.Alpha0 && key <= KeyCode.Alpha9) ||
+               (key >= KeyCode.Keypad0 && key <= KeyCode.Keypad9) ||
+               key == KeyCode.UpArrow || key == KeyCode.DownArrow ||
+               key == KeyCode.LeftArrow || key == KeyCode.RightArrow ||
+               key == KeyCode.LeftShift || key == KeyCode.RightShift ||
+               key == KeyCode.Space || key == KeyCode.Return ||
+               key == KeyCode.Backspace || key == KeyCode.Tab;
+    }
+
+
     void HighlightPrompt(int index)
     {
         for (int i = 0; i < prompts.Count; i++)
         {
             Image img = prompts[i].GetComponent<Image>();
-
             if (promptSuccess[i])
                 img.color = Color.green;
             else
@@ -161,7 +176,6 @@ public class QTERhythmManager : MonoBehaviour
 
         Debug.Log(success ? "[QTE] SUCCESS" : "[QTE] FAIL");
 
-        // ✅ 播放成功或失败的音效
         if (success)
         {
             PlaySound(successSound);
@@ -188,9 +202,6 @@ public class QTERhythmManager : MonoBehaviour
     void PlaySound(AudioClip clip)
     {
         if (clip != null)
-        {
             AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position, 1f);
-        }
     }
-
 }

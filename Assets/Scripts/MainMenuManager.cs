@@ -14,4 +14,11 @@ public class MainMenuManager : MonoBehaviour
     {
         SceneManager.LoadScene("IntroScene"); // 这里切换场景
     }
+
+    public void OnExitButtonPressed()
+    {
+        Debug.Log("Exiting game...");
+        Application.Quit();
+    }
+
 }

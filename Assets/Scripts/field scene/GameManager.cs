@@ -46,6 +46,10 @@ public class GameManager : MonoBehaviour
 
     private AudioSource audioSource;
 
+    [Header("Penalty UI")]
+    [SerializeField] private TMP_Text penaltyText;
+    [SerializeField] private CanvasGroup penaltyCanvasGroup;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -93,6 +97,12 @@ public class GameManager : MonoBehaviour
 
         player.transform.position = playerInitialPosition;
         playerInventory.ClearInventory();
+
+        if (penaltyText != null)
+            penaltyText.gameObject.SetActive(false);
+
+        if (penaltyCanvasGroup != null)
+            penaltyCanvasGroup.alpha = 0f;
     }
 
     void ResetUIElements()
@@ -186,7 +196,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     bool CheckForRequiredPlant()
     {
         int collectedPlant = playerInventory.GetPlantCount(requiredPlant);
@@ -231,11 +240,11 @@ public class GameManager : MonoBehaviour
             resultText.text = "Congratulations!\nYou have successfully gathered the plant!";
             PlaySound(successMusic);
 
-            treatButton.gameObject.SetActive(true); // ✅ 显示治疗按钮
-            restartButton.gameObject.SetActive(false); // ✅ 隐藏重启按钮
+            treatButton.gameObject.SetActive(true);
+            restartButton.gameObject.SetActive(false);
 
             treatButton.onClick.RemoveAllListeners();
-            treatButton.onClick.AddListener(GoToTreatment); // 替换为你的处理函数
+            treatButton.onClick.AddListener(GoToTreatment);
         }
         else
         {
@@ -257,26 +266,21 @@ public class GameManager : MonoBehaviour
             if (snake != null)
                 snake.canMove = false;
         }
-
     }
 
     void RestartGame()
     {
-        // ✅ Step 1: regenerate the map
         mapGenerator.GenerateMap();
 
-        // ✅ Step 1.5: refresh the tilemap
         if (tileManager != null)
             tileManager.RefreshTiles();
 
-        // ✅ Step 2: regenerate plants & snakes
         if (plantSpawner != null)
             plantSpawner.SpawnPlants();
 
         if (snakeSpawner != null)
             snakeSpawner.SpawnSnakes();
 
-        // ✅ Step 3: update player spawn point
         Vector2Int spawn = mapGenerator.playerSpawnPoint;
         playerInitialPosition = new Vector3(
             spawn.x * tileManager.tileSize + tileManager.mapOffset.x,
@@ -284,7 +288,6 @@ public class GameManager : MonoBehaviour
             0f
         );
 
-        // ✅ Step 4: reset the rest
         InitializeGameState();
     }
 
@@ -312,6 +315,8 @@ public class GameManager : MonoBehaviour
         {
             audioSource.PlayOneShot(wrongPlantSound);
         }
+
+        ShowTimePenalty(20); // ✅ 新增的提示方法
     }
 
     private IEnumerator FlashTimerRed()
@@ -328,10 +333,39 @@ public class GameManager : MonoBehaviour
         timerText.transform.localScale = originalScale;
     }
 
-    public void GoToTreatment()
+    public void ShowTimePenalty(int seconds)
     {
-        // save the current game state if needed
-        UnityEngine.SceneManagement.SceneManager.LoadScene("TreatmentScene");
+        if (penaltyText == null || penaltyCanvasGroup == null)
+            return;
+
+        penaltyText.text = $"Collected wrong plant! Time penalty -{seconds}s";
+        penaltyText.gameObject.SetActive(true);
+        penaltyCanvasGroup.alpha = 1f;
+
+        StartCoroutine(FadePenaltyText());
     }
 
+    private IEnumerator FadePenaltyText()
+    {
+        float showDuration = 1.8f;
+        float fadeDuration = 0.5f;
+
+        yield return new WaitForSeconds(showDuration);
+
+        float elapsed = 0f;
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            penaltyCanvasGroup.alpha = 1f - (elapsed / fadeDuration);
+            yield return null;
+        }
+
+        penaltyCanvasGroup.alpha = 0f;
+        penaltyText.gameObject.SetActive(false);
+    }
+
+    public void GoToTreatment()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("TreatmentScene");
+    }
 }

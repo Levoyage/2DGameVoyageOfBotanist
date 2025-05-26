@@ -28,9 +28,14 @@ public class TreatmentManager : MonoBehaviour
     public QTEProgressBar qteProgressBar;
     public QTERhythmManager qteRhythmManager;
 
+    [Header("QTE Ready Prompt")]
+    public GameObject qteReadyPanel;
+    public TMP_Text qteReadyText;
+    public Button qteStartButton;
+
     [Header("Settings")]
     public ItemData preparedMedicine;
-    private string correctMethod = "grind";
+    private string correctMethod = "boil";
     private string selectedMethod = "";
 
     [Header("Result UI")]
@@ -45,7 +50,6 @@ public class TreatmentManager : MonoBehaviour
     [Header("Audio")]
     public AudioClip failSound;
     private AudioSource audioSource;
-
 
     void Start()
     {
@@ -79,8 +83,10 @@ public class TreatmentManager : MonoBehaviour
         retryButton.gameObject.SetActive(false);
         continueButton.gameObject.SetActive(false);
 
-        audioSource = gameObject.AddComponent<AudioSource>();
+        if (qteReadyPanel != null)
+            qteReadyPanel.SetActive(false);
 
+        audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     void CloseInstructionPanel()
@@ -125,7 +131,7 @@ public class TreatmentManager : MonoBehaviour
         if (instructionPanel != null)
             instructionPanel.SetActive(false);
 
-        if (method == "boil")
+        if (method != correctMethod)
         {
             if (failSound != null)
                 audioSource.PlayOneShot(failSound);
@@ -134,11 +140,33 @@ public class TreatmentManager : MonoBehaviour
             return;
         }
 
-
-        if (qteRhythmManager != null)
+        if (qteReadyPanel != null)
         {
-            qteRhythmManager.StartQTE();
-            Debug.Log("[Treatment] Started QTE rhythm system");
+            qteReadyPanel.SetActive(true);
+            if (qteReadyText != null)
+                qteReadyText.text = "Steady hands now... It's time to follow the rhythm exactly — no room for mistakes.";
+
+            if (qteStartButton != null)
+            {
+                qteStartButton.onClick.RemoveAllListeners();
+                qteStartButton.onClick.AddListener(() =>
+                {
+                    qteReadyPanel.SetActive(false);
+                    if (qteRhythmManager != null)
+                    {
+                        qteRhythmManager.StartQTE();
+                        Debug.Log("[Treatment] Started QTE rhythm system");
+                    }
+                });
+            }
+        }
+        else
+        {
+            if (qteRhythmManager != null)
+            {
+                qteRhythmManager.StartQTE();
+                Debug.Log("[Treatment] Started QTE rhythm system (fallback)");
+            }
         }
     }
 
