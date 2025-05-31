@@ -198,6 +198,6 @@ public class PostTreatmentManager : MonoBehaviour
 
     void StartMainGame()
     {
-        SceneManager.LoadScene("NextSceneName"); // Replace with actual scene name
+        SceneManager.LoadScene("ClinicScene-1"); // Replace with actual scene name
     }
 }
