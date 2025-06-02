@@ -38,8 +38,25 @@ public class TileManager : MonoBehaviour
 
     void Update()
     {
+        Transform player = GameManager.Instance.PlayerTransform;
+        // 自动尝试重新连接 Player 引用
+        if (player == null)
+        {
+            GameObject foundPlayer = GameObject.FindGameObjectWithTag("Player");
+            if (foundPlayer != null)
+            {
+                player = foundPlayer.transform;
+            }
+            else
+            {
+                // 没找到，跳过更新
+                return;
+            }
+        }
+
         UpdateVisibleTiles();
     }
+
 
     // Instantiate tiles based on mapData but deactivate all initially
     void InitializeTileInstances()
@@ -76,6 +93,8 @@ public class TileManager : MonoBehaviour
     // Update visibility of tiles based on the player's current position
     void UpdateVisibleTiles()
     {
+
+
         int playerTileX = Mathf.RoundToInt((player.position.x - mapOffset.x) / tileSize);
         int playerTileY = Mathf.RoundToInt((player.position.y - mapOffset.y) / -tileSize);
 

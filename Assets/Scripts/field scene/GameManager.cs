@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public Button restartButton;
     public Button treatButton;
 
+    public GameObject playerPrefab; // 👈 通过 Inspector 挂上 prefab
     public GameObject player;
     private PlayerInventory playerInventory;
     private PlayerController playerController;
@@ -58,31 +59,24 @@ public class GameManager : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
+        Debug.Log("🧠 GameManager Awake: " + name);
     }
 
     void Start()
     {
-        playerInventory = player.GetComponent<PlayerInventory>();
-        playerController = player.GetComponent<PlayerController>();
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.loop = true;
 
-        mapGenerator.GenerateMap();
-
-        Vector2Int spawn = mapGenerator.playerSpawnPoint;
-        playerInitialPosition = new Vector3(
-            spawn.x * tileManager.tileSize + tileManager.mapOffset.x,
-            -spawn.y * tileManager.tileSize + tileManager.mapOffset.y,
-            0f
-        );
-        Debug.Log($"[Spawn] Player spawn at: {spawn.x}, {spawn.y}");
-
-        InitializeGameState();
+        RestartGame();
     }
+
 
     void InitializeGameState()
     {
+        playerInventory = player.GetComponent<PlayerInventory>();
+        playerController = player.GetComponent<PlayerController>();
+
         if (playerController != null)
             playerController.canMove = false;
 
@@ -270,6 +264,22 @@ public class GameManager : MonoBehaviour
 
     void RestartGame()
     {
+        if (player != null)
+        {
+            Destroy(player);
+        }
+
+        player = Instantiate(playerPrefab);
+        player.tag = "Player";
+        player.name = "Player";
+
+        StartCoroutine(CheckIfPlayerSurvives()); // 👈 检查是否被删了
+
+        tileManager.player = player.transform;
+
+        Debug.Log("✅ PLAYER INSTANTIATED: " + player.name);
+
+
         mapGenerator.GenerateMap();
 
         if (tileManager != null)
@@ -316,7 +326,7 @@ public class GameManager : MonoBehaviour
             audioSource.PlayOneShot(wrongPlantSound);
         }
 
-        ShowTimePenalty(20); // ✅ 新增的提示方法
+        ShowTimePenalty(20);
     }
 
     private IEnumerator FlashTimerRed()
@@ -368,4 +378,20 @@ public class GameManager : MonoBehaviour
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene("TreatmentScene");
     }
+
+    public Transform PlayerTransform => player != null ? player.transform : null;
+    private IEnumerator CheckIfPlayerSurvives()
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        if (player == null)
+        {
+            Debug.LogError("❌ Player was destroyed after instantiation!");
+        }
+        else
+        {
+            Debug.Log("✅ Player still exists after 0.1s");
+        }
+    }
+
 }

@@ -6,6 +6,7 @@ public class CameraFollow : MonoBehaviour
 
     void LateUpdate()
     {
+        Transform player = GameManager.Instance.PlayerTransform;
         if (player != null)
         {
             Vector3 newPosition = player.position;

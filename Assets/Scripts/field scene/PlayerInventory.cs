@@ -13,16 +13,7 @@ public class PlayerInventory : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
+        Debug.Log("👤 PlayerInventory Awake: " + name);
     }
 
     private void Start()
