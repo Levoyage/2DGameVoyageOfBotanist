@@ -247,7 +247,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5660682661711919123
 RectTransform:
   m_ObjectHideFlags: 0
@@ -289,9 +289,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentUI: {fileID: 8062327850022880345}
-  encyclopediaUI: {fileID: 4785030480489514571}
-  backpackUI: {fileID: 6046980511286408659}
-  slotGrid: {fileID: 7296890563145164082}
   slotuiList:
   - {fileID: 2640032401955632299}
   - {fileID: 2910586418565821923}
