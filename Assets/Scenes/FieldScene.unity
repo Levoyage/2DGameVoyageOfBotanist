@@ -4346,6 +4346,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BackpackUI
       objectReference: {fileID: 0}
+    - target: {fileID: 6046980511286408659, guid: 0950a7883fb02e949a44007ce90f4339, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6051312891118334862, guid: 0950a7883fb02e949a44007ce90f4339, type: 3}
       propertyPath: m_Layer
       value: 8

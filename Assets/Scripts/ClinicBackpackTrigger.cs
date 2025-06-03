@@ -2,35 +2,30 @@ using UnityEngine;
 
 public class ClinicBackpackTrigger : MonoBehaviour
 {
-    private bool canPressTab = false;
-    private bool backpackOpened = false;
+    public GameObject backpackSystemPrefab;
 
     void Start()
     {
-        // 启动后延迟允许按 Tab，防止误触
-        Invoke(nameof(EnableTabTrigger), 0.2f);
+        // 延迟一点初始化背包系统
+        Invoke(nameof(InitializeAndShowBackpack), 0.1f);
     }
 
-    void EnableTabTrigger()
+    void InitializeAndShowBackpack()
     {
-        canPressTab = true;
-    }
-
-    void Update()
-    {
-        if (canPressTab && !backpackOpened && Input.GetKeyDown(KeyCode.Tab))
+        if (BackpackSystemManager.Instance == null)
         {
-            Debug.Log("🎒 Tab pressed in ClinicScene-1 — opening backpack");
-
-            if (BackpackSystemManager.Instance != null)
-            {
-                BackpackSystemManager.Instance.OpenBackpack();
-                backpackOpened = true; // 只允许打开一次
-            }
-            else
-            {
-                Debug.LogWarning("❌ BackpackSystemManager is missing in ClinicScene-1!");
-            }
+            GameObject backpack = Instantiate(backpackSystemPrefab);
+            backpack.name = "BackpackSystemManager";
+            Debug.Log("🧪 Instantiated Backpack prefab.");
         }
+
+        if (BackpackSystemManager.Instance != null)
+        {
+            BackpackSystemManager.Instance.OpenBackpack();
+            Debug.Log("🎒 Backpack opened.");
+        }
+
+        // ✅ 禁用自身防止后续执行
+        this.enabled = false;
     }
 }

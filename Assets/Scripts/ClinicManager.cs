@@ -25,12 +25,11 @@ public class ClinicManager : MonoBehaviour
     public TextMeshProUGUI doctorFeedbackText;
     public GameObject gatherButton;
 
-    [Header("Backpack & Encyclopedia")]
-    public GameObject backpackUI;
-
     [Header("Tab Instruction Bubble")]
     public GameObject instructionBubble;
     public TextMeshProUGUI instructionText;
+    public GameObject secondInstructionBubble;
+    public TextMeshProUGUI secondInstructionText;
 
     [Header("Character Portrait")]
     public GameObject portrait;
@@ -42,6 +41,7 @@ public class ClinicManager : MonoBehaviour
     };
 
     private string tabInstructionLine = "Press Tab to open your encyclopedia and backpack.";
+    private string secondTabInstruction = "Press Tab again to proceed.";
 
     private string[] patientDialogue = {
         "My skin is red and itchy.",
@@ -53,31 +53,28 @@ public class ClinicManager : MonoBehaviour
     private int herbIntroIndex = 0;
     private int patientDialogueIndex = 0;
 
-    // Stage state machine
     private enum Stage
     {
         Intro,
         WaitForTab,
+        BackpackOpen,
         PatientDialogue,
         Diagnosis
     }
 
     private Stage currentStage = Stage.Intro;
-
-    // Exported diagnosis result
     public static string selectedDiagnosis = "";
 
     void Start()
     {
-        // Initial UI state
         introDialogueBubble.SetActive(true);
         mentorDialogueBubble.SetActive(false);
         patientDialogueBubble.SetActive(false);
         instructionBubble.SetActive(false);
+        secondInstructionBubble.SetActive(false);
         diagnosisPanel.SetActive(false);
         gatherButton.SetActive(false);
         doctorFeedbackText.gameObject.SetActive(false);
-        if (backpackUI != null) backpackUI.SetActive(false);
 
         introDialogueText.text = herbIntroLines[herbIntroIndex++];
         introNextButton.onClick.RemoveAllListeners();
@@ -95,22 +92,37 @@ public class ClinicManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            bool isActive = backpackUI.activeSelf;
-
-            if (currentStage == Stage.WaitForTab)
+            switch (currentStage)
             {
-                // ✅ First tutorial Tab press — show backpack and move forward
-                backpackUI.SetActive(true);
-                instructionBubble.SetActive(false);
-                currentStage = Stage.PatientDialogue;
+                case Stage.WaitForTab:
+                    if (BackpackSystemManager.Instance != null)
+                        BackpackSystemManager.Instance.OpenBackpack();
 
-                patientDialogueBubble.SetActive(true);
-                patientDialogueText.text = patientDialogue[patientDialogueIndex++];
-            }
-            else
-            {
-                // ✅ Later presses toggle backpack
-                backpackUI.SetActive(!isActive);
+                    instructionBubble.SetActive(false);
+                    secondInstructionBubble.SetActive(true);
+                    secondInstructionText.text = secondTabInstruction;
+                    currentStage = Stage.BackpackOpen;
+                    break;
+
+                case Stage.BackpackOpen:
+                    if (BackpackSystemManager.Instance != null)
+                        BackpackSystemManager.Instance.CloseBackpack();
+
+                    secondInstructionBubble.SetActive(false);
+                    currentStage = Stage.PatientDialogue;
+                    patientDialogueBubble.SetActive(true);
+                    patientDialogueText.text = patientDialogue[patientDialogueIndex++];
+                    break;
+
+                case Stage.PatientDialogue:
+                    if (BackpackSystemManager.Instance != null)
+                    {
+                        if (BackpackSystemManager.Instance.IsBackpackOpen())
+                            BackpackSystemManager.Instance.CloseBackpack();
+                        else
+                            BackpackSystemManager.Instance.OpenBackpack();
+                    }
+                    break;
             }
         }
     }
@@ -126,11 +138,12 @@ public class ClinicManager : MonoBehaviour
                 }
                 else
                 {
-                    // Show Tab instruction
                     introDialogueBubble.SetActive(false);
                     instructionBubble.SetActive(true);
                     instructionText.text = tabInstructionLine;
+
                     if (portrait != null) portrait.SetActive(false);
+
                     introNextButton.gameObject.SetActive(false);
                     currentStage = Stage.WaitForTab;
                 }
@@ -145,9 +158,6 @@ public class ClinicManager : MonoBehaviour
                 {
                     EndPatientDialogue();
                 }
-                break;
-
-            default:
                 break;
         }
     }
