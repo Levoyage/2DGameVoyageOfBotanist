@@ -70,6 +70,36 @@ public class BackpackSystemManager : MonoBehaviour
 
             // 延迟注册 UI 给 PlayerInventory
             StartCoroutine(DelayedRegisterUIToPlayerInventory());
+
+            // 自动绑定 CloseButton
+            Transform closeBtn = backpackInstance.transform.Find("ParentUI/CloseButton"); // 注意你的层级
+            if (closeBtn != null)
+            {
+                UnityEngine.UI.Button button = closeBtn.GetComponent<UnityEngine.UI.Button>();
+                if (button != null)
+                {
+                    button.onClick.RemoveAllListeners(); // 清除旧监听
+                    button.onClick.AddListener(() =>
+                    {
+                        Debug.Log("🧪 CloseButton clicked");
+                        ClinicManager cm = FindObjectOfType<ClinicManager>();
+                        if (cm != null)
+                        {
+                            cm.OnBackpackClosedByButton();
+                        }
+                        CloseBackpack();
+                    });
+                    Debug.Log("🔗 CloseButton bound to ClinicManager.OnBackpackClosedByButton()");
+                }
+                else
+                {
+                    Debug.LogWarning("❌ CloseButton found but missing Button component.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("❌ CloseButton not found. Check hierarchy path.");
+            }
         }
         else
         {

@@ -41,7 +41,7 @@ public class ClinicManager : MonoBehaviour
     };
 
     private string tabInstructionLine = "Press Tab to open your encyclopedia and backpack.";
-    private string secondTabInstruction = "Press Tab again to proceed.";
+    private string secondTabInstruction = "Press <b>Tab</b> again or click <b><color=#9C7B54>'x'</color></b> to proceed →";
 
     private string[] patientDialogue = {
         "My skin is red and itchy.",
@@ -166,6 +166,18 @@ public class ClinicManager : MonoBehaviour
                 break;
         }
     }
+
+    public void OnBackpackClosedByButton()
+    {
+        if (currentStage == Stage.BackpackOpen)
+        {
+            secondInstructionBubble.SetActive(false);
+            currentStage = Stage.PatientDialogue;
+            patientDialogueBubble.SetActive(true);
+            patientDialogueText.text = patientDialogue[patientDialogueIndex++];
+        }
+    }
+
 
     void EndPatientDialogue()
     {
