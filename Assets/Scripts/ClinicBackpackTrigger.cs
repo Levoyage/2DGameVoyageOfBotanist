@@ -2,30 +2,25 @@ using UnityEngine;
 
 public class ClinicBackpackTrigger : MonoBehaviour
 {
-    public GameObject backpackSystemPrefab;
-
     void Start()
     {
-        // 延迟一点初始化背包系统
-        Invoke(nameof(InitializeAndShowBackpack), 0.1f);
+        // 延迟一点，等场景内容加载完成
+        Invoke(nameof(OpenBackpackOnce), 0.2f);
     }
 
-    void InitializeAndShowBackpack()
+    void OpenBackpackOnce()
     {
-        if (BackpackSystemManager.Instance == null)
-        {
-            GameObject backpack = Instantiate(backpackSystemPrefab);
-            backpack.name = "BackpackSystemManager";
-            Debug.Log("🧪 Instantiated Backpack prefab.");
-        }
-
         if (BackpackSystemManager.Instance != null)
         {
             BackpackSystemManager.Instance.OpenBackpack();
-            Debug.Log("🎒 Backpack opened.");
+            Debug.Log("🎒 ClinicScene: Backpack opened.");
+        }
+        else
+        {
+            Debug.LogWarning("❌ BackpackSystemManager not found in ClinicScene.");
         }
 
-        // ✅ 禁用自身防止后续执行
-        this.enabled = false;
+        // 禁用自身，确保只触发一次
+        enabled = false;
     }
 }

@@ -90,13 +90,25 @@ public class GameManager : MonoBehaviour
         gameEnded = false;
 
         player.transform.position = playerInitialPosition;
-        playerInventory.ClearInventory();
 
         if (penaltyText != null)
             penaltyText.gameObject.SetActive(false);
 
         if (penaltyCanvasGroup != null)
             penaltyCanvasGroup.alpha = 0f;
+
+        StartCoroutine(WaitAndClearInventory());
+    }
+
+    private IEnumerator WaitAndClearInventory()
+    {
+        yield return new WaitForSeconds(0.2f); // 等待 BackpackUI 注册完成
+
+        if (playerInventory != null)
+        {
+            playerInventory.ClearInventory();
+            Debug.Log("✅ Inventory cleared after UI ready.");
+        }
     }
 
     void ResetUIElements()

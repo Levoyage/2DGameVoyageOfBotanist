@@ -1,20 +1,18 @@
 using UnityEngine;
 using System.Collections;
 
-
-
 public class BackpackSystemManager : MonoBehaviour
 {
     public static BackpackSystemManager Instance;
 
     [Header("Prefab Reference")]
-    public GameObject backpackUIPrefab;  // Assign this in Inspector (your BackpackUI prefab)
+    public GameObject backpackUIPrefab;
 
     private GameObject backpackInstance;
     private GameObject parentUI;
+
     void Awake()
     {
-        // Singleton pattern — ensure only one instance exists across scenes
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -22,28 +20,31 @@ public class BackpackSystemManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(this.gameObject); // Persist across scenes
+        DontDestroyOnLoad(gameObject);
     }
 
     void Start()
     {
-        if (backpackUIPrefab != null && backpackInstance == null)
+        InitializeIfNeeded();
+    }
+
+    /// <summary>
+    /// 确保初始化 Backpack UI 和绑定 PlayerInventory
+    /// </summary>
+    public void InitializeIfNeeded()
+    {
+        if (backpackInstance != null) return;
+
+        if (backpackUIPrefab != null)
         {
             backpackInstance = Instantiate(backpackUIPrefab);
             backpackInstance.name = "BackpackUI (Runtime)";
-            backpackInstance.SetActive(false);  // Start hidden
+            backpackInstance.SetActive(false);
             DontDestroyOnLoad(backpackInstance);
 
-            Debug.Log("✅ Backpack UI instantiated successfully.");
-        }
-        else
-        {
-            Debug.LogWarning("⚠️ Backpack UI instantiation skipped (already exists or prefab is null).");
-        }
+            Debug.Log("✅ Backpack UI instantiated.");
 
-        // 尝试从实例中递归查找 ParentUI
-        if (backpackInstance != null)
-        {
+            // 查找 ParentUI
             Transform found = backpackInstance.transform.Find("ParentUI");
             if (found == null)
             {
@@ -64,29 +65,67 @@ public class BackpackSystemManager : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("❌ Failed to find ParentUI in backpack prefab.");
+                Debug.LogWarning("❌ Could not find 'ParentUI' in backpack prefab.");
+            }
+
+            // 延迟注册 UI 给 PlayerInventory
+            StartCoroutine(DelayedRegisterUIToPlayerInventory());
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ backpackUIPrefab is not assigned.");
+        }
+    }
+
+    private IEnumerator DelayedRegisterUIToPlayerInventory()
+    {
+        yield return new WaitForSeconds(0.1f); // 等待 PlayerInventory 完成 Start()
+
+        PlayerInventory inv = FindObjectOfType<PlayerInventory>();
+        if (inv != null && backpackInstance != null)
+        {
+            BackPackUI ui = backpackInstance.GetComponent<BackPackUI>();
+            if (ui != null)
+            {
+                inv.SetBackpackUI(ui);
+                Debug.Log("📦 Backpack UI registered to PlayerInventory.");
+            }
+            else
+            {
+                Debug.LogWarning("❌ backpackInstance 没有 BackPackUI 组件！");
             }
         }
-
+        else
+        {
+            Debug.LogWarning("❌ PlayerInventory 或 backpackInstance 丢失，无法注册 UI。");
+        }
     }
 
     public void OpenBackpack()
     {
-        gameObject.SetActive(true);
+        InitializeIfNeeded();
         StartCoroutine(DelayedOpenUI());
     }
 
     private IEnumerator DelayedOpenUI()
     {
-        yield return null; // 等待 1 帧，确保 UI 元素已激活 & 渲染链稳定
+        yield return null;
 
-        if (parentUI != null)
+        if (backpackInstance != null && !backpackInstance.activeSelf)
         {
-            parentUI.SetActive(true);
-            Debug.Log("🎒 Backpack UI actually activated.");
+            backpackInstance.SetActive(true); // ✅ 激活最外层
         }
 
-        // 刷新显示内容（可选加一帧）
+        if (parentUI != null && !parentUI.activeSelf)
+        {
+            parentUI.SetActive(true); // ✅ 同时激活子面板
+            Debug.Log("🎒 Backpack UI actually activated.");
+        }
+        else if (parentUI == null)
+        {
+            Debug.LogWarning("❌ parentUI is null when trying to open backpack.");
+        }
+
         PlayerInventory playerInv = FindObjectOfType<PlayerInventory>();
         if (playerInv != null)
         {
@@ -97,9 +136,13 @@ public class BackpackSystemManager : MonoBehaviour
 
     public void CloseBackpack()
     {
+        if (parentUI != null)
+            parentUI.SetActive(false);
+
         if (backpackInstance != null)
         {
             backpackInstance.SetActive(false);
+            Debug.Log("🎒 Backpack UI closed.");
         }
     }
 

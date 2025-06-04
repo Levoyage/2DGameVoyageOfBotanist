@@ -67,6 +67,11 @@ public class ClinicManager : MonoBehaviour
 
     void Start()
     {
+        if (BackpackSystemManager.Instance != null)
+        {
+            BackpackSystemManager.Instance.InitializeIfNeeded();
+        }
+
         introDialogueBubble.SetActive(true);
         mentorDialogueBubble.SetActive(false);
         patientDialogueBubble.SetActive(false);

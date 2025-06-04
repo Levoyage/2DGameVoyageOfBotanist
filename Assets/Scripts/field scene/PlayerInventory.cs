@@ -20,17 +20,17 @@ public class PlayerInventory : MonoBehaviour
     {
         InitializeSlots();
 
-        // 查找 UI 控制器（可能是跨 scene 实例化出来的）
-        backpackUI = FindObjectOfType<BackPackUI>();
-        if (backpackUI == null)
-        {
-            Debug.LogWarning("⚠️ No BackPackUI found in scene!");
-        }
-        else
+        // 不再强制查找 UI，而是等 BackpackSystemManager 来注册
+        if (backpackUI != null)
         {
             UpdateInventoryUI();
         }
+        else
+        {
+            Debug.Log("⏳ Waiting for BackPackUI to be registered...");
+        }
     }
+
 
     /// <summary>
     /// 初始化 24 格空格子
@@ -109,8 +109,15 @@ public class PlayerInventory : MonoBehaviour
             slot.ClearSlot();
         }
 
-        Debug.Log("🧺 Inventory cleared.");
-        UpdateInventoryUI();
+        Debug.Log("\ud83e\uddfa Inventory cleared.");
+        if (backpackUI != null)
+        {
+            UpdateInventoryUI();
+        }
+        else
+        {
+            Debug.Log("\u23f3 UI not ready yet during ClearInventory()");
+        }
     }
 
     /// <summary>
@@ -150,7 +157,13 @@ public class PlayerInventory : MonoBehaviour
     /// </summary>
     public void RefreshUI()
     {
-        Debug.Log("📦 Refreshing backpack UI via PlayerInventory.");
+        Debug.Log("\ud83d\udce6 Refreshing backpack UI via PlayerInventory.");
         UpdateInventoryUI();
+    }
+
+    public void SetBackpackUI(BackPackUI backpackUI)
+    {
+        this.backpackUI = backpackUI;
+        RefreshUI();
     }
 }
