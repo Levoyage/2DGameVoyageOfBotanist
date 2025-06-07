@@ -25,11 +25,18 @@ public class ClinicManager : MonoBehaviour
     public TextMeshProUGUI doctorFeedbackText;
     public GameObject gatherButton;
 
-    [Header("Tab Instruction Bubble")]
+    [Header("Instruction Bubbles")]
     public GameObject instructionBubble;
     public TextMeshProUGUI instructionText;
     public GameObject secondInstructionBubble;
     public TextMeshProUGUI secondInstructionText;
+
+    public GameObject codexInstructionBubble;
+    public TextMeshProUGUI codexInstructionText;
+    public GameObject satchelInstructionBubble;
+    public TextMeshProUGUI satchelInstructionText;
+
+    public GameObject promptPanel;
 
     [Header("Character Portrait")]
     public GameObject portrait;
@@ -40,12 +47,14 @@ public class ClinicManager : MonoBehaviour
         "Check it often — knowledge saves lives."
     };
 
+    private string codexInstruction = "This is your botanical codex. It shall preserve records of the specimens you find.";
+    private string satchelInstruction = "This is your satchel. It contains the plants you have gathered correctly.";
     private string tabInstructionLine = "Press Tab to open your encyclopedia and backpack.";
-    private string secondTabInstruction = "Press <b>Tab</b> again or click <b><color=#9C7B54>'x'</color></b> to proceed →";
+    private string secondTabInstruction = "Press <b>Tab</b> again or click <b><color=#9C7B54>×</color></b> to proceed →";
 
     private string[] patientDialogue = {
         "My skin is red and itchy.",
-        "These rashes won’t go away, and they burn."
+        "These rashes won't go away, and they burn."
     };
 
     private string mentorQuestion = "What is your diagnosis, apprentice?";
@@ -77,9 +86,12 @@ public class ClinicManager : MonoBehaviour
         patientDialogueBubble.SetActive(false);
         instructionBubble.SetActive(false);
         secondInstructionBubble.SetActive(false);
+        codexInstructionBubble.SetActive(false);
+        satchelInstructionBubble.SetActive(false);
         diagnosisPanel.SetActive(false);
         gatherButton.SetActive(false);
         doctorFeedbackText.gameObject.SetActive(false);
+        promptPanel.SetActive(false);
 
         introDialogueText.text = herbIntroLines[herbIntroIndex++];
         introNextButton.onClick.RemoveAllListeners();
@@ -104,8 +116,18 @@ public class ClinicManager : MonoBehaviour
                         BackpackSystemManager.Instance.OpenBackpack();
 
                     instructionBubble.SetActive(false);
+
+                    codexInstructionBubble.SetActive(true);
+                    codexInstructionText.text = codexInstruction;
+
+                    satchelInstructionBubble.SetActive(true);
+                    satchelInstructionText.text = satchelInstruction;
+
                     secondInstructionBubble.SetActive(true);
                     secondInstructionText.text = secondTabInstruction;
+
+                    promptPanel.SetActive(true);
+
                     currentStage = Stage.BackpackOpen;
                     break;
 
@@ -113,20 +135,15 @@ public class ClinicManager : MonoBehaviour
                     if (BackpackSystemManager.Instance != null)
                         BackpackSystemManager.Instance.CloseBackpack();
 
+                    codexInstructionBubble.SetActive(false);
+                    satchelInstructionBubble.SetActive(false);
                     secondInstructionBubble.SetActive(false);
+
+                    promptPanel.SetActive(false);
+
                     currentStage = Stage.PatientDialogue;
                     patientDialogueBubble.SetActive(true);
                     patientDialogueText.text = patientDialogue[patientDialogueIndex++];
-                    break;
-
-                case Stage.PatientDialogue:
-                    if (BackpackSystemManager.Instance != null)
-                    {
-                        if (BackpackSystemManager.Instance.IsBackpackOpen())
-                            BackpackSystemManager.Instance.CloseBackpack();
-                        else
-                            BackpackSystemManager.Instance.OpenBackpack();
-                    }
                     break;
             }
         }
@@ -134,36 +151,32 @@ public class ClinicManager : MonoBehaviour
 
     public void ShowNextDialogue()
     {
-        switch (currentStage)
+        if (currentStage == Stage.Intro)
         {
-            case Stage.Intro:
-                if (herbIntroIndex < herbIntroLines.Length)
-                {
-                    introDialogueText.text = herbIntroLines[herbIntroIndex++];
-                }
-                else
-                {
-                    introDialogueBubble.SetActive(false);
-                    instructionBubble.SetActive(true);
-                    instructionText.text = tabInstructionLine;
-
-                    if (portrait != null) portrait.SetActive(false);
-
-                    introNextButton.gameObject.SetActive(false);
-                    currentStage = Stage.WaitForTab;
-                }
-                break;
-
-            case Stage.PatientDialogue:
-                if (patientDialogueIndex < patientDialogue.Length)
-                {
-                    patientDialogueText.text = patientDialogue[patientDialogueIndex++];
-                }
-                else
-                {
-                    EndPatientDialogue();
-                }
-                break;
+            if (herbIntroIndex < herbIntroLines.Length)
+            {
+                introDialogueText.text = herbIntroLines[herbIntroIndex++];
+            }
+            else
+            {
+                introDialogueBubble.SetActive(false);
+                instructionBubble.SetActive(true);
+                instructionText.text = tabInstructionLine;
+                introNextButton.gameObject.SetActive(false);
+                if (portrait != null) portrait.SetActive(false);
+                currentStage = Stage.WaitForTab;
+            }
+        }
+        else if (currentStage == Stage.PatientDialogue)
+        {
+            if (patientDialogueIndex < patientDialogue.Length)
+            {
+                patientDialogueText.text = patientDialogue[patientDialogueIndex++];
+            }
+            else
+            {
+                EndPatientDialogue();
+            }
         }
     }
 
@@ -171,13 +184,17 @@ public class ClinicManager : MonoBehaviour
     {
         if (currentStage == Stage.BackpackOpen)
         {
+            codexInstructionBubble.SetActive(false);
+            satchelInstructionBubble.SetActive(false);
             secondInstructionBubble.SetActive(false);
+
+            promptPanel.SetActive(false);
+
             currentStage = Stage.PatientDialogue;
             patientDialogueBubble.SetActive(true);
             patientDialogueText.text = patientDialogue[patientDialogueIndex++];
         }
     }
-
 
     void EndPatientDialogue()
     {
