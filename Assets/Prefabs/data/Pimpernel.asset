@@ -16,7 +16,7 @@ MonoBehaviour:
   itemIcon: {fileID: 21300000, guid: 66a6bb0ea17486c479bfcedb974de087, type: 3}
   itemPrefab: {fileID: 5000168298370061642, guid: 2c35d31b7d7547f439a5a7770c335b05, type: 3}
   maxStackSize: 99
-  herbLargeImage: {fileID: 21300000, guid: 069db080c56075a4f82e3a92a0512b6c, type: 3}
+  herbLargeImage: {fileID: 21300000, guid: 7ddf83d1ffea2764dbd2130acdb23f4d, type: 3}
   description: A small flowering plant with delicate red or blue blossoms. used to
     treat skin conditions such as eczema and rashes. Also believed to aid in detoxification
     and relieve respiratory issues.
