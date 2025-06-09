@@ -9,6 +9,7 @@ public class ClinicManager : MonoBehaviour
     public GameObject introDialogueBubble;
     public TextMeshProUGUI introDialogueText;
     public Button introNextButton;
+    public Button introBackButton;
 
     [Header("Patient Dialogue")]
     public GameObject patientDialogueBubble;
@@ -42,9 +43,12 @@ public class ClinicManager : MonoBehaviour
     public TextMeshProUGUI gatherIntroText1;
     public GameObject gatherIntroBubble2;
     public TextMeshProUGUI gatherIntroText2;
+    public Button gatherBackButton2;
 
     [Header("Character Portrait")]
     public GameObject portrait;
+    public GameObject patientPortrait;
+
 
     private string[] herbIntroLines = {
         "From now on, you'll carry your own satchel for herbs. Keep it tidy.",
@@ -52,18 +56,18 @@ public class ClinicManager : MonoBehaviour
         "Check it often — knowledge saves lives."
     };
 
-    private string codexInstruction = "This is your botanical codex. It shall preserve records of the plants you collect.";
-    private string satchelInstruction = "This is your satchel. It contains only the plants you have gathered correctly and with care.";
-    private string tabInstructionLine = "Press Tab to open your encyclopedia and backpack.";
-    private string secondTabInstruction = "Press <b>Tab</b> again or click <b><color=#9C7B54>'x'</color></b> to proceed →";
+    private string codexInstruction = "This is your encyclopedia. It shall preserve records of the plants you collect. <color=red><b>Click >> to open it.</b></color>";
+    private string satchelInstruction = "This is your satchel. It contains only the plants you have gathered correctly.";
+    private string tabInstructionLine = "Press Tab to open your encyclopedia and satchel.";
+    private string secondTabInstruction = "Press <color=red><b>Tab</b></color> again or click <b><color=#9C7B54>'x'</color></b> to proceed →";
 
     private string[] patientDialogue = {
         "My skin is red and itchy.",
-        "These rashes won’t go away, and they burn."
+        "These rashes won't go away, and they burn."
     };
 
-    private string mentorIntroLine1 = "You’ve done well with simple cases. But this time, two patients await. Observe carefully, and once diagnosed, you’ll gather the herbs yourself.";
-    private string mentorIntroLine2 = "Time will not wait, and missteps come with cost. Should you run short, the emergency kits we’ve stocked may suffice—but only once, and for one. Choose wisely, or their fates may be sealed.";
+    private string mentorIntroLine1 = "You've done well with simple cases. But this time, two patients await. Diagnose carefully and gather the herbs yourself.";
+    private string mentorIntroLine2 = "If you fail to collect the herbs, the <color=red><b>supply pack</b></color> may suffice — but now we have only <color=red><b>one</b></color>. Choose wisely, or their fates may be sealed.";
     private string mentorQuestion = "What is your diagnosis, apprentice?";
 
     private int herbIntroIndex = 0;
@@ -108,6 +112,9 @@ public class ClinicManager : MonoBehaviour
         introDialogueText.text = herbIntroLines[herbIntroIndex++];
         introNextButton.onClick.RemoveAllListeners();
         introNextButton.onClick.AddListener(ShowNextDialogue);
+        introBackButton.onClick.RemoveAllListeners();
+        introBackButton.onClick.AddListener(ShowPreviousIntroDialogue);
+        introBackButton.gameObject.SetActive(false);
 
         patientNextButton.onClick.RemoveAllListeners();
         patientNextButton.onClick.AddListener(ShowNextDialogue);
@@ -115,6 +122,9 @@ public class ClinicManager : MonoBehaviour
         eczemaButton.onClick.AddListener(() => CheckDiagnosis("Eczema"));
         woundInfectionButton.onClick.AddListener(() => CheckDiagnosis("Wound Infection"));
         scurvyButton.onClick.AddListener(() => CheckDiagnosis("Scurvy"));
+        gatherBackButton2.onClick.RemoveAllListeners();
+        gatherBackButton2.onClick.AddListener(ShowPreviousGatherIntro);
+        gatherBackButton2.gameObject.SetActive(false);
     }
 
     void Update()
@@ -165,6 +175,8 @@ public class ClinicManager : MonoBehaviour
             if (herbIntroIndex < herbIntroLines.Length)
             {
                 introDialogueText.text = herbIntroLines[herbIntroIndex++];
+                if (herbIntroIndex >= 2)
+                    introBackButton.gameObject.SetActive(true);
             }
             else
             {
@@ -172,6 +184,7 @@ public class ClinicManager : MonoBehaviour
                 instructionBubble.SetActive(true);
                 instructionText.text = tabInstructionLine;
                 introNextButton.gameObject.SetActive(false);
+                introBackButton.gameObject.SetActive(false);
                 if (portrait != null) portrait.SetActive(false);
                 currentStage = Stage.WaitForTab;
             }
@@ -195,6 +208,7 @@ public class ClinicManager : MonoBehaviour
                 gatherIntroText1.text = mentorIntroLine1;
                 if (portrait != null) portrait.SetActive(true);
                 mentorIntroStage++;
+                gatherBackButton2.gameObject.SetActive(false);
             }
             else if (mentorIntroStage == 1)
             {
@@ -203,10 +217,12 @@ public class ClinicManager : MonoBehaviour
                 gatherIntroText2.text = mentorIntroLine2;
                 if (portrait != null) portrait.SetActive(true);
                 mentorIntroStage++;
+                gatherBackButton2.gameObject.SetActive(true);
             }
             else if (mentorIntroStage == 2)
             {
                 gatherIntroBubble2.SetActive(false);
+                gatherBackButton2.gameObject.SetActive(false);
                 if (portrait != null) portrait.SetActive(false);
                 currentStage = Stage.PatientDialogue;
                 patientDialogueBubble.SetActive(true);
@@ -214,6 +230,32 @@ public class ClinicManager : MonoBehaviour
             }
         }
     }
+
+    public void ShowPreviousIntroDialogue()
+    {
+        if (herbIntroIndex > 1)
+        {
+            herbIntroIndex--;
+            introDialogueText.text = herbIntroLines[herbIntroIndex - 1];
+
+            if (herbIntroIndex == 1)
+                introBackButton.gameObject.SetActive(false);
+            else
+                introBackButton.gameObject.SetActive(true);
+        }
+    }
+
+    public void ShowPreviousGatherIntro()
+    {
+        if (mentorIntroStage == 2)
+        {
+            mentorIntroStage = 1;
+            gatherIntroBubble2.SetActive(false);
+            gatherIntroBubble1.SetActive(true);
+            gatherIntroText1.text = mentorIntroLine1;
+        }
+    }
+
 
     public void OnBackpackClosedByButton()
     {
@@ -264,4 +306,6 @@ public class ClinicManager : MonoBehaviour
     {
         SceneManager.LoadScene("FieldScene");
     }
+
+
 }

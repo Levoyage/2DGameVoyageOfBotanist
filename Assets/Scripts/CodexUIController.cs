@@ -13,8 +13,8 @@ public class CodexUIController : MonoBehaviour
 
     [Header("Codex Entry UI")]
     public Image herbIcon;
-    public Toggle herbTitleToggle; // Assume you're using Toggle for title
-    public Text herbTitleLabel; // UnityEngine.UI.Text
+
+    public TMP_Text herbTitleLabel;
 
     public Button detailButton;
 
