@@ -77,7 +77,7 @@ public class PatientManager : MonoBehaviour
 
         if (choice == "Eczema")
         {
-            doctorFeedbackText.text = "Correct! Red, itchy rashes and burning skin suggest eczema. The best remedy? A soothing herbal balm with pimpernel.";
+            doctorFeedbackText.text = "Correct! Red, itchy rashes and burning skin suggest eczema. The best remedy? A soothing herbal balm with <color=green><b>pimpernel</b></color>.";
             gatherButton.SetActive(true);
         }
         else if (choice == "Scurvy")

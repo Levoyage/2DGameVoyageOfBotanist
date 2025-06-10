@@ -356,7 +356,7 @@ public class ClinicManager : MonoBehaviour
             switch (choice)
             {
                 case "Heart Arrhythmia":
-                    feedback = "Correct. The patient's symptoms point to a disrupted heart rhythm. Foxglove-based tincture is the preferred treatment.";
+                    feedback = "Correct. The patient's symptoms point to a disrupted heart rhythm. <color=green><b>Foxglove</b></color>-based tincture is the preferred treatment.";
                     isCorrect = true;
                     break;
                 case "Flu":
@@ -387,7 +387,7 @@ public class ClinicManager : MonoBehaviour
             switch (choice)
             {
                 case "Nausea":
-                    feedback = "Correct. The symptoms indicate persistent nausea. Ginger root is often used as a remedy.";
+                    feedback = "Correct. The symptoms indicate persistent nausea. <color=green><b>Ginger</b></color> root is often used as a remedy.";
                     isCorrect = true;
                     break;
                 case "Migraine":
