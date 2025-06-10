@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using System.Collections;
+
 
 public class TreatmentManager : MonoBehaviour
 {
@@ -119,6 +121,10 @@ public class TreatmentManager : MonoBehaviour
             qteRhythmManager.onQTESuccess = EvaluateTreatment;
             qteRhythmManager.onQTEFail = () => HandleMistake(selectedMethod);
         }
+
+        StartCoroutine(ForceRebuildLayoutNextFrame());
+
+
     }
 
     void StartTreatment(string method)
@@ -243,6 +249,14 @@ public class TreatmentManager : MonoBehaviour
     {
         Debug.Log("[Treatment] Proceeding to post-treatment scene...");
         UnityEngine.SceneManagement.SceneManager.LoadScene("PostTreatmentScene");
+    }
+
+    private IEnumerator ForceRebuildLayoutNextFrame()
+    {
+        yield return null; // 等待一帧，确保 UI 激活完成
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(plantNameText.rectTransform);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(patientNameText.rectTransform);
     }
 
     void SpawnCelebrationEffect()

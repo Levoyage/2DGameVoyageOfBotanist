@@ -15,6 +15,8 @@ public class ClinicManager : MonoBehaviour
     public GameObject patientDialogueBubble;
     public TextMeshProUGUI patientDialogueText;
     public Button patientNextButton;
+    public Button nextPatientButton;
+
 
     [Header("Mentor Dialogue (Diagnosis Prompt)")]
     public GameObject mentorDialogueBubble;
@@ -22,7 +24,9 @@ public class ClinicManager : MonoBehaviour
 
     [Header("Diagnosis System")]
     public GameObject diagnosisPanel;
-    public Button eczemaButton, woundInfectionButton, scurvyButton;
+    public Button arrhythmiaButton;
+    public Button fluButton;
+    public Button heatstrokeButton;
     public TextMeshProUGUI doctorFeedbackText;
     public GameObject gatherButton;
 
@@ -31,24 +35,23 @@ public class ClinicManager : MonoBehaviour
     public TextMeshProUGUI instructionText;
     public GameObject secondInstructionBubble;
     public TextMeshProUGUI secondInstructionText;
-
     public GameObject codexInstructionBubble;
     public TextMeshProUGUI codexInstructionText;
     public GameObject satchelInstructionBubble;
     public TextMeshProUGUI satchelInstructionText;
-
     public GameObject promptPanel;
 
+    [Header("Mentor Intro Bubbles")]
     public GameObject gatherIntroBubble1;
     public TextMeshProUGUI gatherIntroText1;
     public GameObject gatherIntroBubble2;
     public TextMeshProUGUI gatherIntroText2;
     public Button gatherBackButton2;
 
-    [Header("Character Portrait")]
+    [Header("Character Portraits")]
     public GameObject portrait;
     public GameObject patientPortrait;
-
+    public GameObject patientPortrait2;
 
     private string[] herbIntroLines = {
         "From now on, you'll carry your own satchel for herbs. Keep it tidy.",
@@ -62,9 +65,16 @@ public class ClinicManager : MonoBehaviour
     private string secondTabInstruction = "Press <color=red><b>Tab</b></color> again or click <b><color=#9C7B54>'x'</color></b> to proceed →";
 
     private string[] patientDialogue = {
-        "My skin is red and itchy.",
-        "These rashes won't go away, and they burn."
+        "My heart races, and I feel faint just walking.",
+        "It started with fatigue, but now my pulse pounds like thunder."
     };
+
+    private string[] patient2Dialogue = {
+        "Nausea grips me every morning, I can't keep food down.",
+        "It feels like the world spins when I try to eat."
+    };
+
+    private string[] patient2DiagnosisOptions = { "Nausea", "Migraine", "Food Poisoning" };
 
     private string mentorIntroLine1 = "You've done well with simple cases. But this time, two patients await. Diagnose carefully and gather the herbs yourself.";
     private string mentorIntroLine2 = "If you fail to collect the herbs, the <color=red><b>supply pack</b></color> may suffice — but now we have only <color=red><b>one</b></color>. Choose wisely, or their fates may be sealed.";
@@ -72,7 +82,9 @@ public class ClinicManager : MonoBehaviour
 
     private int herbIntroIndex = 0;
     private int patientDialogueIndex = 0;
+    private int patient2DialogueIndex = 0;
     private int mentorIntroStage = 0;
+    private bool isSecondPatient = false;
 
     private enum Stage
     {
@@ -108,6 +120,8 @@ public class ClinicManager : MonoBehaviour
         gatherIntroBubble1.SetActive(false);
         gatherIntroBubble2.SetActive(false);
         if (portrait != null) portrait.SetActive(true);
+        if (patientPortrait != null) patientPortrait.SetActive(true);
+        if (patientPortrait2 != null) patientPortrait2.SetActive(false);
 
         introDialogueText.text = herbIntroLines[herbIntroIndex++];
         introNextButton.onClick.RemoveAllListeners();
@@ -119,12 +133,21 @@ public class ClinicManager : MonoBehaviour
         patientNextButton.onClick.RemoveAllListeners();
         patientNextButton.onClick.AddListener(ShowNextDialogue);
 
-        eczemaButton.onClick.AddListener(() => CheckDiagnosis("Eczema"));
-        woundInfectionButton.onClick.AddListener(() => CheckDiagnosis("Wound Infection"));
-        scurvyButton.onClick.AddListener(() => CheckDiagnosis("Scurvy"));
+        arrhythmiaButton.GetComponentInChildren<TextMeshProUGUI>().text = "Heart Arrhythmia";
+        fluButton.GetComponentInChildren<TextMeshProUGUI>().text = "Flu";
+        heatstrokeButton.GetComponentInChildren<TextMeshProUGUI>().text = "Heatstroke";
+
+        arrhythmiaButton.onClick.AddListener(() => CheckDiagnosis("Heart Arrhythmia"));
+        fluButton.onClick.AddListener(() => CheckDiagnosis("Flu"));
+        heatstrokeButton.onClick.AddListener(() => CheckDiagnosis("Heatstroke"));
+
         gatherBackButton2.onClick.RemoveAllListeners();
         gatherBackButton2.onClick.AddListener(ShowPreviousGatherIntro);
         gatherBackButton2.gameObject.SetActive(false);
+
+        nextPatientButton.onClick.RemoveAllListeners();
+        nextPatientButton.onClick.AddListener(ShowSecondPatient);
+        nextPatientButton.gameObject.SetActive(false);
     }
 
     void Update()
@@ -191,13 +214,27 @@ public class ClinicManager : MonoBehaviour
         }
         else if (currentStage == Stage.PatientDialogue)
         {
-            if (patientDialogueIndex < patientDialogue.Length)
+            if (!isSecondPatient)
             {
-                patientDialogueText.text = patientDialogue[patientDialogueIndex++];
+                if (patientDialogueIndex < patientDialogue.Length)
+                {
+                    patientDialogueText.text = patientDialogue[patientDialogueIndex++];
+                }
+                else
+                {
+                    EndPatientDialogue();
+                }
             }
             else
             {
-                EndPatientDialogue();
+                if (patient2DialogueIndex < patient2Dialogue.Length)
+                {
+                    patientDialogueText.text = patient2Dialogue[patient2DialogueIndex++];
+                }
+                else
+                {
+                    EndPatientDialogue();
+                }
             }
         }
         else if (currentStage == Stage.MentorIntro)
@@ -256,7 +293,6 @@ public class ClinicManager : MonoBehaviour
         }
     }
 
-
     public void OnBackpackClosedByButton()
     {
         if (currentStage == Stage.BackpackOpen)
@@ -277,6 +313,35 @@ public class ClinicManager : MonoBehaviour
         mentorDialogueBubble.SetActive(true);
         mentorDialogueText.text = mentorQuestion;
         diagnosisPanel.SetActive(true);
+
+        if (!isSecondPatient)
+        {
+            arrhythmiaButton.GetComponentInChildren<TextMeshProUGUI>().text = "Heart Arrhythmia";
+            fluButton.GetComponentInChildren<TextMeshProUGUI>().text = "Flu";
+            heatstrokeButton.GetComponentInChildren<TextMeshProUGUI>().text = "Heatstroke";
+
+            arrhythmiaButton.onClick.RemoveAllListeners();
+            fluButton.onClick.RemoveAllListeners();
+            heatstrokeButton.onClick.RemoveAllListeners();
+
+            arrhythmiaButton.onClick.AddListener(() => CheckDiagnosis("Heart Arrhythmia"));
+            fluButton.onClick.AddListener(() => CheckDiagnosis("Flu"));
+            heatstrokeButton.onClick.AddListener(() => CheckDiagnosis("Heatstroke"));
+        }
+        else
+        {
+            arrhythmiaButton.GetComponentInChildren<TextMeshProUGUI>().text = "Nausea";
+            fluButton.GetComponentInChildren<TextMeshProUGUI>().text = "Migraine";
+            heatstrokeButton.GetComponentInChildren<TextMeshProUGUI>().text = "Food Poisoning";
+
+            arrhythmiaButton.onClick.RemoveAllListeners();
+            fluButton.onClick.RemoveAllListeners();
+            heatstrokeButton.onClick.RemoveAllListeners();
+
+            arrhythmiaButton.onClick.AddListener(() => CheckDiagnosis("Nausea"));
+            fluButton.onClick.AddListener(() => CheckDiagnosis("Migraine"));
+            heatstrokeButton.onClick.AddListener(() => CheckDiagnosis("Food Poisoning"));
+        }
         currentStage = Stage.Diagnosis;
     }
 
@@ -284,28 +349,90 @@ public class ClinicManager : MonoBehaviour
     {
         mentorDialogueBubble.SetActive(false);
         selectedDiagnosis = choice;
-
-        if (choice == "Eczema")
+        string feedback = "";
+        bool isCorrect = false;
+        if (!isSecondPatient)
         {
-            doctorFeedbackText.text = "Correct! Red, itchy rashes and burning skin suggest eczema. The best remedy? A soothing herbal balm with pimpernel.";
-            gatherButton.SetActive(true);
-        }
-        else if (choice == "Scurvy")
-        {
-            doctorFeedbackText.text = "Think carefully. The patient has no swollen gums. Try again.";
+            switch (choice)
+            {
+                case "Heart Arrhythmia":
+                    feedback = "Correct. The patient's symptoms point to a disrupted heart rhythm. Foxglove-based tincture is the preferred treatment.";
+                    isCorrect = true;
+                    break;
+                case "Flu":
+                    feedback = "No fever or congestion is present. This doesn't match the profile of influenza.";
+                    break;
+                case "Heatstroke":
+                    feedback = "The patient wasn't exposed to heat, and there are no signs of overheating or confusion.";
+                    break;
+                default:
+                    feedback = "Hmm... not quite. Review the symptoms again.";
+                    break;
+            }
+            doctorFeedbackText.text = feedback;
+            doctorFeedbackText.gameObject.SetActive(true);
+            if (isCorrect)
+            {
+                nextPatientButton.gameObject.SetActive(true);
+                gatherButton.SetActive(false);
+            }
+            else
+            {
+                nextPatientButton.gameObject.SetActive(false);
+                gatherButton.SetActive(false);
+            }
         }
         else
         {
-            doctorFeedbackText.text = "Think carefully. The patient has no wounds. Try again.";
+            switch (choice)
+            {
+                case "Nausea":
+                    feedback = "Correct. The symptoms indicate persistent nausea. Ginger root is often used as a remedy.";
+                    isCorrect = true;
+                    break;
+                case "Migraine":
+                    feedback = "No mention of headache or light sensitivity. This doesn't match migraine.";
+                    break;
+                case "Food Poisoning":
+                    feedback = "No acute pain or fever. Food poisoning is unlikely.";
+                    break;
+                default:
+                    feedback = "Hmm... not quite. Review the symptoms again.";
+                    break;
+            }
+            doctorFeedbackText.text = feedback;
+            doctorFeedbackText.gameObject.SetActive(true);
+            if (isCorrect)
+            {
+                gatherButton.SetActive(true);
+                nextPatientButton.gameObject.SetActive(false);
+            }
+            else
+            {
+                gatherButton.SetActive(false);
+                nextPatientButton.gameObject.SetActive(false);
+            }
         }
+    }
 
-        doctorFeedbackText.gameObject.SetActive(true);
+    public void ShowSecondPatient()
+    {
+        isSecondPatient = true;
+        patient2DialogueIndex = 0;
+        mentorDialogueBubble.SetActive(false);
+        diagnosisPanel.SetActive(false);
+        doctorFeedbackText.gameObject.SetActive(false);
+        nextPatientButton.gameObject.SetActive(false);
+        if (patientPortrait != null) patientPortrait.SetActive(false);
+        if (patientPortrait2 != null) patientPortrait2.SetActive(true);
+        if (portrait != null) portrait.SetActive(false);
+        patientDialogueBubble.SetActive(true);
+        patientDialogueText.text = patient2Dialogue[patient2DialogueIndex++];
+        currentStage = Stage.PatientDialogue;
     }
 
     public void GoToFieldScene()
     {
         SceneManager.LoadScene("FieldScene");
     }
-
-
 }
