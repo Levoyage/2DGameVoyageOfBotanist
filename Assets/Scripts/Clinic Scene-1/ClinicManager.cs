@@ -53,6 +53,11 @@ public class ClinicManager : MonoBehaviour
     public GameObject patientPortrait;
     public GameObject patientPortrait2;
 
+    [Header("Required Herbs")]
+    public ItemData foxgloveItemData;
+    public ItemData gingerItemData;
+
+
     private string[] herbIntroLines = {
         "From now on, you'll carry your own satchel for herbs. Keep it tidy.",
         "We've also compiled an encyclopedia for the plants you find.",
@@ -101,6 +106,16 @@ public class ClinicManager : MonoBehaviour
 
     void Start()
     {
+        //ensure GameStateManager exists（方便跳过前面的scenes）
+        if (GameStateManager.Instance == null)
+        {
+            Debug.LogWarning("GameStateManager was missing. Creating one for debug.");
+            GameObject go = new GameObject("GameStateManager");
+            go.AddComponent<GameStateManager>();
+            DontDestroyOnLoad(go);
+        }
+
+
         if (BackpackSystemManager.Instance != null)
         {
             BackpackSystemManager.Instance.InitializeIfNeeded();
@@ -433,6 +448,8 @@ public class ClinicManager : MonoBehaviour
 
     public void GoToFieldScene()
     {
-        SceneManager.LoadScene("FieldScene");
+        GameStateManager.Instance.SetRequiredPlants(new ItemData[] { foxgloveItemData, gingerItemData });
+
+        SceneManager.LoadScene("FieldScene-1");
     }
 }

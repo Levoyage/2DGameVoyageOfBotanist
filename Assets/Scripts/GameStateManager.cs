@@ -21,6 +21,8 @@ public class GameStateManager : MonoBehaviour
     public bool mountainMapUnlocked = false;
     public bool canyonMapUnlocked = false;
 
+    public ItemData[] requiredPlants;
+
     void Awake()
     {
         // Ensure only one instance exists across scenes
@@ -112,5 +114,10 @@ public class GameStateManager : MonoBehaviour
         }
 
         Debug.Log($"[Treatment] Patient cured. Total cured: {patientsCured}");
+    }
+
+    public void SetRequiredPlants(ItemData[] plants)
+    {
+        requiredPlants = plants;
     }
 }
