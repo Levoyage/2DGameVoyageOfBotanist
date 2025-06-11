@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CollectiblePlant : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class CollectiblePlant : MonoBehaviour
     {
         if (playerInRange && Input.GetKeyDown(KeyCode.Return)) // Return = Enter
         {
-            Collect(player);
+            Collect();
         }
     }
 
@@ -39,42 +40,59 @@ public class CollectiblePlant : MonoBehaviour
         }
     }
 
-    void Collect(GameObject player)
+    void Collect()
     {
         if (plantData == null)
         {
-            Debug.LogError("❌ CollectiblePlant: No ItemData assigned to " + gameObject.name);
+            Debug.LogError($"❌ {name}: No ItemData assigned!");
             return;
         }
 
-        PlayerInventory inventory = player.GetComponent<PlayerInventory>();
+        // 先播放拾取音效
+        if (pickupSound != null)
+            AudioSource.PlayClipAtPoint(pickupSound, transform.position, pickupVolume);
 
-        if (GameManager.Instance != null && GameManager.Instance.requiredPlant != null)
+        // 判断当前场景，使用对应的 GameManager
+        string scene = SceneManager.GetActiveScene().name;
+        bool isCorrect = false;
+
+        if (scene == "FieldScene" && GameManager.Instance != null)
         {
-            if (plantData == GameManager.Instance.requiredPlant)
-            {
-                // ✅ correct plant: add to inventory and play sound
-                if (inventory != null)
-                {
-                    inventory.AddPlant(plantData);
-                }
+            // FieldScene 用单个 requiredPlant
+            var gm = GameManager.Instance;
+            if (plantData == gm.requiredPlant)
+                isCorrect = true;
 
-                GameStateManager.Instance.collectedPlant = plantData; // Store in GameStateManager in case of treatment
-
-                if (pickupSound != null)
-                {
-                    AudioSource.PlayClipAtPoint(pickupSound, transform.position, pickupVolume);
-                }
-            }
+            if (isCorrect)
+                player.GetComponent<PlayerInventory>()?.AddPlant(plantData);
             else
+                gm.ApplyWrongPlantPenalty();
+        }
+        else if (scene == "FieldScene-1" && GameManager1.Instance != null)
+        {
+            // FieldScene-1 用数组 requiredPlants
+            var gm1 = GameManager1.Instance;
+            foreach (var req in gm1.requiredPlants)
             {
-                // ❌ wrong plant: play sound and apply penalty
-                GameManager.Instance.ApplyWrongPlantPenalty();
+                if (plantData == req)
+                {
+                    isCorrect = true;
+                    break;
+                }
             }
+
+            if (isCorrect)
+                player.GetComponent<PlayerInventory>()?.AddPlant(plantData);
+            else
+                gm1.ApplyWrongPlantPenalty();
+        }
+        else
+        {
+            Debug.LogWarning($"⚠️ No suitable GameManager found in scene '{scene}'.");
         }
 
+        // 隐藏提示并销毁植物
         GatherPromptManager.Instance.Hide();
         Destroy(gameObject);
     }
-
 }

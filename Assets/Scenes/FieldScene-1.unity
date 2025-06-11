@@ -366,6 +366,7 @@ MonoBehaviour:
   - {fileID: 2884411436968246601, guid: 1e54f126a701bc74294045a58c944a39, type: 3}
   - {fileID: 5263229783944699635, guid: a5c6447812e541d43a6ac065b231a82a, type: 3}
   - {fileID: 5714482164799283972, guid: adc345f69f8292d4f9f28e66ca425fc6, type: 3}
+  - {fileID: 604700494640649222, guid: 815c4dd96869b614c9e847a4eaed085f, type: 3}
   numberOfPlants: 10
   tileSize: 1
   mapOffset: {x: -23, y: 21}
@@ -1133,7 +1134,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 525055786}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4bd1bf9fc65f0543a8f2704f3f0bd0d, type: 3}
+  m_Script: {fileID: 11500000, guid: f0f16e254949b7549b0f13a6c37834f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   taskText: {fileID: 542983320}
@@ -1145,6 +1146,7 @@ MonoBehaviour:
   restartButton: {fileID: 646086579}
   treatButton: {fileID: 956963882}
   playerPrefab: {fileID: 4150886799883212576, guid: 5008b637cb0283b4f9a807696b776a10, type: 3}
+  player: {fileID: 0}
   mapGenerator: {fileID: 586851311}
   tileManager: {fileID: 959050467}
   plantSpawner: {fileID: 224054423}
@@ -1154,7 +1156,6 @@ MonoBehaviour:
   failureMusic: {fileID: 8300000, guid: 9db0b901736702342b250801f4a3de32, type: 3}
   loseLifeSound: {fileID: 8300000, guid: a0bed06acc7ea284ba42ec913c3a6e01, type: 3}
   wrongPlantSound: {fileID: 8300000, guid: 43e485fe10778f349bb267b5fd82c92e, type: 3}
-  timeLimit: 120
   requiredPlants:
   - {fileID: 11400000, guid: 5186e09a093452b48ad043f16db8be5a, type: 2}
   - {fileID: 11400000, guid: 72b1ec9019bdddb47913fbc3623e557a, type: 2}
@@ -1570,7 +1571,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff196ac48d27ff44f8d583822f7a73bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 3805065577243338519, guid: 5008b637cb0283b4f9a807696b776a10, type: 3}
+  player: {fileID: 0}
+  offset: {x: 0, y: 0, z: -10}
 --- !u!81 &659663398
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2006,7 +2008,7 @@ MonoBehaviour:
   - {fileID: 4168413847048152227, guid: 729860efcb46a0f439643adb6ea0ebc8, type: 3}
   tileSize: 1
   mapOffset: {x: -23, y: 21}
-  player: {fileID: 3805065577243338519, guid: 5008b637cb0283b4f9a807696b776a10, type: 3}
+  player: {fileID: 0}
   screenTileWidth: 70
   screenTileHeight: 70
   solidTiles: 000101000100
@@ -3702,17 +3704,17 @@ SceneRoots:
   m_Roots:
   - {fileID: 659663400}
   - {fileID: 605487670}
-  - {fileID: 224054424}
+  - {fileID: 959050468}
+  - {fileID: 253576066}
   - {fileID: 2051597798}
   - {fileID: 1499262941}
-  - {fileID: 1689893796}
-  - {fileID: 586851312}
-  - {fileID: 1293136501}
-  - {fileID: 491780489}
-  - {fileID: 253576066}
-  - {fileID: 1713390214}
-  - {fileID: 283643035}
   - {fileID: 1381499682}
   - {fileID: 232554763}
-  - {fileID: 959050468}
   - {fileID: 525055787}
+  - {fileID: 1293136501}
+  - {fileID: 586851312}
+  - {fileID: 224054424}
+  - {fileID: 283643035}
+  - {fileID: 491780489}
+  - {fileID: 1713390214}
+  - {fileID: 1689893796}

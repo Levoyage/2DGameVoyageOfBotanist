@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -102,7 +103,18 @@ public class PlayerController : MonoBehaviour
     private void LoseLifeAndTriggerInvincibility()
     {
         isInvincible = true;
-        GameManager.Instance.LoseLife(); // Call the GameManager's LoseLife function
+
+        // 区分场景调用对应 LoseLife()
+        string scene = SceneManager.GetActiveScene().name;
+        if (scene == "FieldScene" && GameManager.Instance != null)
+        {
+            GameManager.Instance.LoseLife();
+        }
+        else if (scene == "FieldScene-1" && GameManager1.Instance != null)
+        {
+            GameManager1.Instance.LoseLife();
+        }
+
         StartCoroutine(FlashSprite());
     }
 

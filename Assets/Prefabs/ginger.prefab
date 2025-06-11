@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.48, y: -1.53, z: 0}
-  m_LocalScale: {x: 0.17096856, y: 0.17096856, z: 0.17096856}
+  m_LocalScale: {x: 0.65, y: 0.65, z: 0.65}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -76,12 +76,12 @@ SpriteRenderer:
   m_SortingLayerID: -1115905537
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 5300700630cc3654a9848887f1df14ff, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6db1ebfb107c44b41b1ecc98cc12be95, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 5.625, y: 6.25}
+  m_Size: {x: 1, y: 2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -114,9 +114,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5dd73b71d0284f489439d6b5be79491, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  plantID: 1
-  plantName: Ginger
+  plantData: {fileID: 11400000, guid: 72b1ec9019bdddb47913fbc3623e557a, type: 2}
   pickupSound: {fileID: 8300000, guid: 9d13764b1798f3e4ca1f7cfd9bfe74fc, type: 3}
+  pickupVolume: 1
 --- !u!61 &3773055540772305414
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -153,8 +153,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5.625, y: 6.25}
-    newSize: {x: 5.625, y: 6.25}
+    oldSize: {x: 1, y: 2}
+    newSize: {x: 1, y: 2}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
