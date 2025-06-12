@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -51,6 +50,9 @@ public class PlantSpawner : MonoBehaviour
                     if (Vector2Int.Distance(pos, spawnPoint) > spawnSafeRadius)
                         possiblePositions.Add(pos);
                 }
+
+        // Filter positions to only include those in the main connected region
+        possiblePositions = possiblePositions.FindAll(pos => mapGenerator.MainRegion.Contains(pos));
 
         // Step 2: forced spawn based on scene
         string sceneName = SceneManager.GetActiveScene().name;

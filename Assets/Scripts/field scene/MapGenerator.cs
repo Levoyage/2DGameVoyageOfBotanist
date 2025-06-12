@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class MapGenerator : MonoBehaviour
 
     public int[,] mapData;
     public Vector2Int playerSpawnPoint = new Vector2Int(-1, -1);
+    public HashSet<Vector2Int> MainRegion { get; private set; }
 
     private int maxRetries = 20;
     private int retryCount = 0;
@@ -92,18 +94,18 @@ public class MapGenerator : MonoBehaviour
 
         Debug.Log($"[FloodFill] Reachable tiles: {connectedFloors.Count} / {totalFloors} ({ratio * 100:F1}%)");
 
-        if (ratio < 0.88f)
+        if (ratio < 0.95f)
         {
             Debug.LogWarning("[MapGen] Connectivity too low, regenerating map...");
             GenerateMap();
             return;
         }
 
-        // ✅ Step 8: Find largest connected region and force player spawn there
-        HashSet<Vector2Int> mainRegion = GetLargestConnectedRegion();
+        // Find largest connected region and force player spawn there
+        MainRegion = GetLargestConnectedRegion();
         List<Vector2Int> candidates = new List<Vector2Int>();
 
-        foreach (Vector2Int pos in mainRegion)
+        foreach (Vector2Int pos in MainRegion)
         {
             bool safe = true;
             for (int dx = -1; dx <= 1; dx++)
@@ -136,16 +138,33 @@ public class MapGenerator : MonoBehaviour
             playerSpawnPoint = new Vector2Int(width / 2, height / 2);
         }
 
-        // ✅ Step 9: Remove isolated floor regions
+        // Remove isolated floor regions
         foreach (Vector2Int pos in AllFloorPositions())
         {
-            if (!mainRegion.Contains(pos))
+            if (!MainRegion.Contains(pos))
             {
                 mapData[pos.x, pos.y] = treeTileID;
             }
         }
 
-        // ✅ Step 10: Final spawn safety check — ensure spawn has sufficient open space
+        // Remove dead ends
+        bool removed;
+        do
+        {
+            removed = false;
+            foreach (var pos in MainRegion.ToList())
+            {
+                int n = CountFloorNeighbors(pos);
+                if (n == 1)
+                {
+                    mapData[pos.x, pos.y] = treeTileID;
+                    MainRegion.Remove(pos);
+                    removed = true;
+                }
+            }
+        } while (removed);
+
+        // Final spawn safety check
         if (!IsSpawnPointTrulyFree(playerSpawnPoint, 110))
         {
             Debug.LogWarning("[SpawnCheck] Spawn area too constrained — regenerating map...");
@@ -155,6 +174,20 @@ public class MapGenerator : MonoBehaviour
 
         retryCount = 0;
         Debug.Log($"Spawn point tileID = {mapData[playerSpawnPoint.x, playerSpawnPoint.y]}");
+    }
+
+    private int CountFloorNeighbors(Vector2Int pos)
+    {
+        int count = 0;
+        foreach (Vector2Int dir in new Vector2Int[] {
+            Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
+        })
+        {
+            Vector2Int neighbor = pos + dir;
+            if (IsInBounds(neighbor.x, neighbor.y) && mapData[neighbor.x, neighbor.y] == floorTileID)
+                count++;
+        }
+        return count;
     }
 
     // Check if spawn point is truly free
@@ -392,3 +425,4 @@ public class MapGenerator : MonoBehaviour
         return floors;
     }
 }
+

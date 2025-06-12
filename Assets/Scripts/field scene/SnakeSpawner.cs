@@ -44,6 +44,9 @@ public class SnakeSpawner : MonoBehaviour
             }
         }
 
+        // Filter positions to only include those in the main connected region
+        validSpots = validSpots.FindAll(pos => mapGenerator.MainRegion.Contains(pos));
+
         if (validSpots.Count == 0)
         {
             Debug.LogWarning("[SnakeSpawner] No valid floor found to spawn snake.");
