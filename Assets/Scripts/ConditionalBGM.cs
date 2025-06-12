@@ -18,7 +18,7 @@ public class ConditionalBGM : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "FieldScene")
+        if (scene.name.StartsWith("FieldScene"))
         {
             StartCoroutine(FadeOut());
         }

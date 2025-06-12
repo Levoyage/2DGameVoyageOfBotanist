@@ -372,7 +372,7 @@ MonoBehaviour:
   tileSize: 1
   mapOffset: {x: -23, y: 21}
   spawnSafeRadius: 4
-  pimpernelMinDistance: 20
+  distantMinDistance: 20
 --- !u!4 &224054424
 Transform:
   m_ObjectHideFlags: 0
@@ -1288,6 +1288,7 @@ MonoBehaviour:
   startButton: {fileID: 966108964}
   restartButton: {fileID: 646086579}
   treatButton: {fileID: 956963882}
+  gameOverButton: {fileID: 1223420471}
   penaltyText: {fileID: 1277672142}
   penaltyCanvasGroup: {fileID: 2115395217}
   noRestartWarningBubble: {fileID: 1349777075}

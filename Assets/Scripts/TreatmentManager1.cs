@@ -48,7 +48,7 @@ public class TreatmentManager1 : MonoBehaviour
     void Start()
     {
         // 初始化收集数据
-        requiredPlants = GameManager1.Instance.requiredPlants;
+        requiredPlants = GameStateManager.Instance.requiredPlants;
         requiredCount = requiredPlants.Length;
         collectedCount = 0;
         foreach (var item in requiredPlants)

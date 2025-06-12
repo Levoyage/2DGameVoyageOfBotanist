@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager1 : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class GameManager1 : MonoBehaviour
     public Button startButton;
     public Button restartButton;
     public Button treatButton;
+    public Button gameOverButton;
+
 
     [Header("Penalty UI")]
     [SerializeField] private TMP_Text penaltyText;
@@ -288,6 +291,7 @@ public class GameManager1 : MonoBehaviour
         audioSource.Stop();
         if (playerController != null)
             playerController.canMove = false;
+
         resultText.gameObject.SetActive(true);
         if (success)
         {
@@ -295,31 +299,36 @@ public class GameManager1 : MonoBehaviour
             PlaySound(successMusic);
             treatButton.gameObject.SetActive(true);
             restartButton.gameObject.SetActive(false);
+
             treatButton.onClick.RemoveAllListeners();
             treatButton.onClick.AddListener(GoToTreatment);
         }
         else
         {
             if (failureReason == "time")
-            {
                 resultText.text = "Time's up!\nYou failed to gather the plant.";
-            }
             else if (failureReason == "lives")
-            {
                 resultText.text = "You ran out of lives!\nYou failed to gather the plant.";
-            }
+
             PlaySound(failureMusic);
-            treatButton.gameObject.SetActive(true);
+            // 失败时：隐藏“去治疗”按钮，显示“Game Over”
+            treatButton.gameObject.SetActive(false);
             restartButton.gameObject.SetActive(false);
-            treatButton.onClick.RemoveAllListeners();
-            treatButton.onClick.AddListener(GoToTreatment);
+            gameOverButton.gameObject.SetActive(true);
+            gameOverButton.onClick.RemoveAllListeners();
+            gameOverButton.onClick.AddListener(() =>
+            {
+                SceneManager.LoadScene("ClinicScene-1");
+            });
         }
+
         foreach (var snake in FindObjectsOfType<SnakeController>())
         {
             if (snake != null)
                 snake.canMove = false;
         }
     }
+
 
     void RestartGame()
     {
