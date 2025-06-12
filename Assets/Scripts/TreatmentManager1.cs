@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class TreatmentManager1 : MonoBehaviour
 {
@@ -13,7 +14,8 @@ public class TreatmentManager1 : MonoBehaviour
 
     [Header("UI Elements")]
     public TMP_Text patientInfoText;
-    public TMP_Text preparedPlantsText;
+    public TMP_Text plantNameText;
+    public TMP_Text instructionText;
     public TMP_Text resultText;
     public Image successImage;
     public Image failureImage;
@@ -31,67 +33,81 @@ public class TreatmentManager1 : MonoBehaviour
 
     [Header("Audio")]
     public AudioClip failSound;
+    private AudioSource audioSource;
 
-    private ItemData[] requiredPlants;
-    private int requiredCount;
-    private int collectedCount;
-    private string correctMethod = "boil";
+    private List<ItemData> plantsToTreat = new List<ItemData>();
+    private int currentPlantIndex = 0;
     private string selectedMethod = "";
 
     void Start()
     {
-        // Initialize plant data
-        requiredPlants = GameStateManager.Instance.requiredPlants;
-        requiredCount = requiredPlants.Length;
-        collectedCount = 0;
-        foreach (var item in requiredPlants)
-            if (PlayerInventory.Instance.GetPlantCount(item) > 0)
-                collectedCount++;
+        audioSource = gameObject.AddComponent<AudioSource>();
 
-        // Auto game over if not all collected
-        if (collectedCount < requiredCount)
+        // 初始化植物数据
+        plantsToTreat.Clear();
+        AddIfInInventory("Foxglove");
+        AddIfInInventory("Ginger");
+
+        if (plantsToTreat.Count < 2)
         {
-            ShowGameOver();
+            ShowGameOver("You don't have both required herbs.");
             return;
         }
 
-        // Show initial diagnosis panel
+        SetupUIForCurrentPlant();
+    }
+
+    void AddIfInInventory(string name)
+    {
+        var inv = PlayerInventory.Instance;
+        foreach (var slot in inv.slots)
+        {
+            if (slot.item != null && slot.item.itemName.ToLower().Contains(name.ToLower()))
+            {
+                plantsToTreat.Add(slot.item);
+                return;
+            }
+        }
+
+    }
+
+    void SetupUIForCurrentPlant()
+    {
+        if (currentPlantIndex >= plantsToTreat.Count)
+        {
+            SceneManager.LoadScene("PostTreatmentScene");
+            return;
+        }
+
+        var currentPlant = plantsToTreat[currentPlantIndex];
+
         diagnosisPanel.SetActive(true);
         instructionPanel.SetActive(false);
         treatmentPanel.SetActive(false);
         resultPanel.SetActive(false);
 
-        // Populate UI
-        patientInfoText.text = "Two patients await treatment!";
-        preparedPlantsText.text = $"Herbs needed: {string.Join(", ", System.Array.ConvertAll(requiredPlants, p => p.itemName))}";
+        patientInfoText.text = $"Prepare treatment for patient #{currentPlantIndex + 1}";
+        plantNameText.text = $"Using: {currentPlant.itemName}";
 
-        // Bind buttons
         brewButton.onClick.RemoveAllListeners();
-        brewButton.onClick.AddListener(ShowInstructionPanel);
+        brewButton.onClick.AddListener(() =>
+        {
+            diagnosisPanel.SetActive(false);
+            instructionPanel.SetActive(true);
+            instructionText.text = $"Prepare the {currentPlant.itemName} carefully...";
+        });
 
         instructionContinueButton.onClick.RemoveAllListeners();
-        instructionContinueButton.onClick.AddListener(StartTreatmentPhase);
+        instructionContinueButton.onClick.AddListener(() =>
+        {
+            instructionPanel.SetActive(false);
+            treatmentPanel.SetActive(true);
+        });
 
         boilButton.onClick.RemoveAllListeners();
         grindButton.onClick.RemoveAllListeners();
         boilButton.onClick.AddListener(() => OnTreatmentStep("boil"));
         grindButton.onClick.AddListener(() => OnTreatmentStep("grind"));
-
-        continueButton.onClick.RemoveAllListeners();
-        continueButton.onClick.AddListener(OnContinue);
-    }
-
-    void ShowInstructionPanel()
-    {
-        diagnosisPanel.SetActive(false);
-        instructionPanel.SetActive(true);
-        patientInfoText.text = "Prepare the medicine with the herbs you collected.";
-    }
-
-    void StartTreatmentPhase()
-    {
-        instructionPanel.SetActive(false);
-        treatmentPanel.SetActive(true);
     }
 
     void OnTreatmentStep(string method)
@@ -101,58 +117,66 @@ public class TreatmentManager1 : MonoBehaviour
         treatmentPanel.SetActive(false);
         resultPanel.SetActive(true);
 
-        bool success = method == correctMethod;
-        if (success)
+        if (method == GetCorrectMethodForCurrentPlant())
         {
             ShowSuccess();
         }
         else
         {
-            ShowGameOver();
+            ShowGameOver("The preparation failed.");
         }
+    }
+
+    string GetCorrectMethodForCurrentPlant()
+    {
+        var plant = plantsToTreat[currentPlantIndex];
+        if (plant.itemName.ToLower().Contains("foxglove")) return "boil";
+        if (plant.itemName.ToLower().Contains("ginger")) return "grind";
+        return "boil"; // default fallback
     }
 
     void ShowSuccess()
     {
+        resultText.text = "Well done! The medicine is ready.";
         successImage.gameObject.SetActive(true);
         failureImage.gameObject.SetActive(false);
-        resultText.text = "Excellent! All required herbs collected and medicine prepared.";
-        PlayConfetti();
         continueButton.gameObject.SetActive(true);
 
-        if (failSound != null)
-            AudioSource.PlayClipAtPoint(failSound, Vector3.zero);
+        if (confettiPrefabs != null && confettiCanvas != null)
+        {
+            foreach (var prefab in confettiPrefabs)
+            {
+                Instantiate(prefab, confettiCanvas.transform);
+            }
+        }
+
+        continueButton.onClick.RemoveAllListeners();
+        continueButton.onClick.AddListener(() =>
+        {
+            currentPlantIndex++;
+            SetupUIForCurrentPlant();
+        });
     }
 
-    void ShowGameOver()
+    void ShowGameOver(string message)
     {
         diagnosisPanel.SetActive(false);
         instructionPanel.SetActive(false);
         treatmentPanel.SetActive(false);
         resultPanel.SetActive(true);
+
+        resultText.text = $"Game Over: {message}";
         successImage.gameObject.SetActive(false);
         failureImage.gameObject.SetActive(true);
-        resultText.text = "Game Over: insufficient herbs.";
         continueButton.gameObject.SetActive(true);
+
+        if (failSound != null)
+            audioSource.PlayOneShot(failSound);
+
         continueButton.onClick.RemoveAllListeners();
         continueButton.onClick.AddListener(() =>
         {
-            // Return to clinic before field scene
             SceneManager.LoadScene("ClinicScene-1");
         });
-    }
-
-    void OnContinue()
-    {
-        // Proceed to post-treatment
-        SceneManager.LoadScene("PostTreatmentScene");
-    }
-
-    void PlayConfetti()
-    {
-        foreach (var prefab in confettiPrefabs)
-        {
-            Instantiate(prefab, confettiCanvas.transform);
-        }
     }
 }

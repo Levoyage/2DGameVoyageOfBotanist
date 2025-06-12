@@ -17,17 +17,10 @@ public class GameManager1 : MonoBehaviour
     public Button startButton;
     public Button restartButton;
     public Button treatButton;
-    public Button gameOverButton;
-
 
     [Header("Penalty UI")]
     [SerializeField] private TMP_Text penaltyText;
     [SerializeField] private CanvasGroup penaltyCanvasGroup;
-
-    [Header("No-Restart Warning")]
-    [SerializeField] private GameObject noRestartWarningBubble;
-    [SerializeField] private TMP_Text warningText;
-    [SerializeField] private Button noRestartNextButton;
 
     public GameObject playerPrefab; // 👈 通过 Inspector 挂上 prefab
     public GameObject player;
@@ -79,7 +72,6 @@ public class GameManager1 : MonoBehaviour
         RestartGame();
     }
 
-
     void InitializeGameState()
     {
         playerInventory = player.GetComponent<PlayerInventory>();
@@ -121,45 +113,6 @@ public class GameManager1 : MonoBehaviour
 
     void ResetUIElements()
     {
-        // 显示无重来警告
-        ShowNoRestartWarning();
-
-        // 隐藏任务相关UI
-        taskText.gameObject.SetActive(false);
-        taskTextBackground.gameObject.SetActive(false);
-        timerText.gameObject.SetActive(false);
-        resultText.gameObject.SetActive(false);
-        taskDisplay.gameObject.SetActive(false);
-        restartButton.gameObject.SetActive(false);
-        startButton.gameObject.SetActive(false);
-    }
-
-    private void ShowNoRestartWarning()
-    {
-        if (warningText != null)
-        {
-            warningText.text = "This time you cannot restart. Choose wisely.";
-        }
-
-        if (noRestartWarningBubble != null)
-        {
-            noRestartWarningBubble.SetActive(true);
-        }
-
-        // 设置Next按钮点击事件
-        if (noRestartNextButton != null)
-        {
-            noRestartNextButton.onClick.RemoveAllListeners();
-            noRestartNextButton.onClick.AddListener(() =>
-            {
-                noRestartWarningBubble.SetActive(false);
-                ShowTaskUI();
-            });
-        }
-    }
-
-    void ShowTaskUI()
-    {
         // 显示任务UI
         if (requiredPlants != null && requiredPlants.Length > 0)
         {
@@ -178,10 +131,19 @@ public class GameManager1 : MonoBehaviour
         }
         taskText.gameObject.SetActive(true);
         taskTextBackground.gameObject.SetActive(true);
+
+        timerText.gameObject.SetActive(false);
+        resultText.gameObject.SetActive(false);
+        taskDisplay.gameObject.SetActive(false);
+        restartButton.gameObject.SetActive(false);
+
         startButton.gameObject.SetActive(true);
 
         startButton.onClick.RemoveAllListeners();
         startButton.onClick.AddListener(StartGame);
+
+        restartButton.onClick.RemoveAllListeners();
+        restartButton.onClick.AddListener(RestartGame);
     }
 
     void StartGame()
@@ -311,15 +273,8 @@ public class GameManager1 : MonoBehaviour
                 resultText.text = "You ran out of lives!\nYou failed to gather the plant.";
 
             PlaySound(failureMusic);
-            // 失败时：隐藏“去治疗”按钮，显示“Game Over”
+            restartButton.gameObject.SetActive(true);
             treatButton.gameObject.SetActive(false);
-            restartButton.gameObject.SetActive(false);
-            gameOverButton.gameObject.SetActive(true);
-            gameOverButton.onClick.RemoveAllListeners();
-            gameOverButton.onClick.AddListener(() =>
-            {
-                SceneManager.LoadScene("ClinicScene-1");
-            });
         }
 
         foreach (var snake in FindObjectsOfType<SnakeController>())
@@ -328,7 +283,6 @@ public class GameManager1 : MonoBehaviour
                 snake.canMove = false;
         }
     }
-
 
     void RestartGame()
     {
@@ -346,7 +300,6 @@ public class GameManager1 : MonoBehaviour
         tileManager.player = player.transform;
 
         Debug.Log("✅ PLAYER INSTANTIATED: " + player.name);
-
 
         mapGenerator.GenerateMap();
 
@@ -461,5 +414,4 @@ public class GameManager1 : MonoBehaviour
             Debug.Log("✅ Player still exists after 0.1s");
         }
     }
-
 }

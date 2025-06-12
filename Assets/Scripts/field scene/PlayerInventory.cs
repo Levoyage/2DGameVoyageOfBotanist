@@ -13,6 +13,7 @@ public class PlayerInventory : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
         Debug.Log("👤 PlayerInventory Awake: " + name);
     }
 

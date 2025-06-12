@@ -144,5 +144,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   plantData: {fileID: 11400000, guid: 5186e09a093452b48ad043f16db8be5a, type: 2}
-  pickupSound: {fileID: 8300000, guid: 1e76ae9bbecbd9342a2de217471aaab4, type: 3}
-  pickupVolume: 1
+  pickupSound: {fileID: 8300000, guid: 9d13764b1798f3e4ca1f7cfd9bfe74fc, type: 3}
+  pickupVolume: 10

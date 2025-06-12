@@ -819,7 +819,8 @@ MonoBehaviour:
   treatmentPanel: {fileID: 1419682444}
   resultPanel: {fileID: 832580571}
   patientInfoText: {fileID: 958253515}
-  preparedPlantsText: {fileID: 373189816}
+  plantNameText: {fileID: 373189816}
+  instructionText: {fileID: 855081971}
   resultText: {fileID: 1524749187}
   successImage: {fileID: 792877477}
   failureImage: {fileID: 1531009877}
@@ -3051,6 +3052,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 991575899}
   m_CullTransparentMesh: 1
+--- !u!1 &991660097
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 991660099}
+  - component: {fileID: 991660098}
+  m_Layer: 0
+  m_Name: BackpackSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &991660098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991660097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1ae09c8cfb0c4489cd08a873d94a61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  backpackSystemPrefab: {fileID: 6981534277711773958, guid: 0239dd0a474bc4e479fbcbf3acba30d9, type: 3}
+--- !u!4 &991660099
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991660097}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 18.568052, y: 6.272241, z: 2.4059653}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1028845857
 GameObject:
   m_ObjectHideFlags: 0
@@ -3515,6 +3561,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1215970853}
   m_CullTransparentMesh: 1
+--- !u!1 &1238350907
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1238350909}
+  - component: {fileID: 1238350908}
+  m_Layer: 0
+  m_Name: PlayerInventoryManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1238350908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238350907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01620d72e0e9d564e887eda10c011319, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventoryUI: {fileID: 0}
+  slotGrid: {fileID: 0}
+  slots: []
+--- !u!4 &1238350909
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238350907}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 18.568052, y: 6.272241, z: 2.4059653}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1250430596
 GameObject:
   m_ObjectHideFlags: 0
@@ -5628,3 +5721,5 @@ SceneRoots:
   - {fileID: 968114480}
   - {fileID: 1733308781}
   - {fileID: 184757606}
+  - {fileID: 1238350909}
+  - {fileID: 991660099}

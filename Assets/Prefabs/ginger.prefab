@@ -116,7 +116,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   plantData: {fileID: 11400000, guid: 72b1ec9019bdddb47913fbc3623e557a, type: 2}
   pickupSound: {fileID: 8300000, guid: 9d13764b1798f3e4ca1f7cfd9bfe74fc, type: 3}
-  pickupVolume: 1
+  pickupVolume: 10
 --- !u!61 &3773055540772305414
 BoxCollider2D:
   m_ObjectHideFlags: 0
