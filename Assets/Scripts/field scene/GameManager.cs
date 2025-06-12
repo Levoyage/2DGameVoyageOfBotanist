@@ -113,7 +113,7 @@ public class GameManager : MonoBehaviour
 
     void ResetUIElements()
     {
-        taskText.text = $"Find the {requiredPlant.itemName} in 2 minutes to finish the potion!";
+        taskText.text = $"Find the <b><color=red>{requiredPlant.itemName}</color></b> in 2 minutes to finish the potion!";
         taskText.gameObject.SetActive(true);
         taskTextBackground.gameObject.SetActive(true);
 

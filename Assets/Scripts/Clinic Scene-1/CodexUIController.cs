@@ -39,8 +39,16 @@ public class CodexUIController : MonoBehaviour
             herbIcon.sprite = currentItem.itemIcon;
             herbTitleLabel.text = currentItem.itemName;
 
-            detailButton.onClick.RemoveAllListeners();
-            detailButton.onClick.AddListener(ShowDetails);
+            detailButton.onClick.AddListener(() =>
+  {
+      ShowDetails();
+
+      ClinicManager cm = FindObjectOfType<ClinicManager>();
+      if (cm != null)
+      {
+          cm.HideCodexInstructionBubble();
+      }
+  });
         }
         returnButton.onClick.RemoveAllListeners();
         returnButton.onClick.AddListener(ReturnToCodex);

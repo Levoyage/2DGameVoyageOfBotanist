@@ -34,14 +34,20 @@ public class PostTreatmentManager : MonoBehaviour
 
     void Start()
     {
+        mentorLines = new string[] {
+            "For each patient you heal, you will earn <color=red><b>5 gold coins</b></color>. When you have enough coins, you can afford to <color=red><b>travel to new places</b></color> to gather herbs.",
+            "Your training is complete. From here, your path lies among wild herbs and ailing souls."
+        };
+
         if (GameStateManager.Instance != null)
         {
-            GameStateManager.Instance.gold = 0;
-            GameStateManager.Instance.supplyPacks = 0;
+            GameStateManager.Instance.gold = 5;
+            GameStateManager.Instance.patientsCured++;
         }
-        else
+
+        if (audioSource == null)
         {
-            Debug.LogWarning("⚠️ GameStateManager.Instance is null in PostTreatmentScene.");
+            audioSource = gameObject.AddComponent<AudioSource>();
         }
 
         // Initial state: show patient gratitude bubble
@@ -72,19 +78,6 @@ public class PostTreatmentManager : MonoBehaviour
         {
             backButton.onClick.RemoveAllListeners();
             backButton.onClick.AddListener(ShowPreviousMentorLine);
-        }
-
-        mentorLines = new string[] {
-            "Supply Packs are used when you travel to gather herbs in the wild. Be sure to keep enough on hand.",
-            "Since you used the clinic’s own supplies to treat the patient, no additional payment is granted.",
-            "You’ll earn one supply pack for each successful treatment. But only gold will let you explore new regions to gather rarer herbs.",
-            "Your training is complete. From here, your path lies among wild herbs and ailing souls."
-        };
-
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
         }
     }
 
@@ -120,7 +113,6 @@ public class PostTreatmentManager : MonoBehaviour
         if (GameStateManager.Instance != null)
         {
             GameStateManager.Instance.gold = 5;
-            GameStateManager.Instance.supplyPacks = 1;
             GameStateManager.Instance.patientsCured++;
         }
 

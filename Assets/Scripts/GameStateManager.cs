@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class GameStateManager : MonoBehaviour
 {
-    public static GameStateManager Instance;
+    public static GameStateManager Instance { get; private set; }
 
     [Header("Treatment Data")]
     public ItemData collectedPlant;        // The plant currently selected or collected
@@ -14,8 +14,9 @@ public class GameStateManager : MonoBehaviour
 
     [Header("Progress & Economy")]
     public int gold = 0;                   // Current gold count
-    public int supplyPacks = 0;            // Current supply pack count
     public int patientsCured = 0;          // Number of patients successfully treated
+    public int currentDay = 1;             // Current day number
+    public bool isTutorial = true;         // Whether we're in tutorial mode
 
     [Header("Map Unlock Progress")]
     public bool mountainMapUnlocked = false;
@@ -36,6 +37,14 @@ public class GameStateManager : MonoBehaviour
         DontDestroyOnLoad(gameObject); // Persist across scene loads
     }
 
+    void Start()
+    {
+        if (isTutorial)
+        {
+            InitializeTutorialDefaults();
+        }
+    }
+
     /// <summary>
     /// Resets all gameplay-related progress.
     /// Call this if the player starts a new game or wants to reset data.
@@ -45,8 +54,8 @@ public class GameStateManager : MonoBehaviour
         collectedPlant = null;
         currentDisease = "";
         gold = 0;
-        supplyPacks = 0;
         patientsCured = 0;
+        currentDay = 1;
         mountainMapUnlocked = false;
         canyonMapUnlocked = false;
     }
@@ -55,13 +64,10 @@ public class GameStateManager : MonoBehaviour
     /// Set up default values specifically for the tutorial.
     /// Call this in PostTreatmentScene Start() if needed.
     /// </summary>
-    public void SetTutorialDefaults()
+    public void InitializeTutorialDefaults()
     {
         gold = 5;
-        supplyPacks = 1;
-        patientsCured = 0;
-
-        Debug.Log("[Init] Tutorial defaults applied: 5 gold, 1 supply pack.");
+        Debug.Log("[Init] Tutorial defaults applied: 5 gold.");
     }
 
     /// <summary>
@@ -74,30 +80,18 @@ public class GameStateManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Add supply packs to the player's inventory.
+    /// Spend gold. Returns true if successful, false if not enough.
     /// </summary>
-    public void AddSupply(int amount)
+    public bool SpendGold(int amount)
     {
-        supplyPacks += amount;
-        Debug.Log($"[Economy] Gained {amount} supply pack(s). Total = {supplyPacks}");
-    }
-
-    /// <summary>
-    /// Spend supply packs. Returns true if successful, false if not enough.
-    /// </summary>
-    public bool SpendSupply(int amount)
-    {
-        if (supplyPacks >= amount)
+        if (gold >= amount)
         {
-            supplyPacks -= amount;
-            Debug.Log($"[Economy] Spent {amount} supply pack(s). Remaining = {supplyPacks}");
+            gold -= amount;
+            Debug.Log($"[Economy] Spent {amount} gold. Remaining = {gold}");
             return true;
         }
-        else
-        {
-            Debug.LogWarning("[Economy] Not enough supply packs!");
-            return false;
-        }
+        Debug.LogWarning("[Economy] Not enough gold!");
+        return false;
     }
 
     /// <summary>
@@ -106,11 +100,10 @@ public class GameStateManager : MonoBehaviour
     public void OnPatientCured(bool rewardGold)
     {
         patientsCured++;
-        AddSupply(1);
 
         if (rewardGold)
         {
-            AddGold(5); // Adjust as needed
+            AddGold(10);
         }
 
         Debug.Log($"[Treatment] Patient cured. Total cured: {patientsCured}");
@@ -119,5 +112,11 @@ public class GameStateManager : MonoBehaviour
     public void SetRequiredPlants(ItemData[] plants)
     {
         requiredPlants = plants;
+    }
+
+    public void CompleteTutorial()
+    {
+        isTutorial = false;
+        Debug.Log("[Progress] Tutorial completed!");
     }
 }

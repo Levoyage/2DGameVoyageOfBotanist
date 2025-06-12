@@ -17,6 +17,15 @@ public class GameManager1 : MonoBehaviour
     public Button restartButton;
     public Button treatButton;
 
+    [Header("Penalty UI")]
+    [SerializeField] private TMP_Text penaltyText;
+    [SerializeField] private CanvasGroup penaltyCanvasGroup;
+
+    [Header("No-Restart Warning")]
+    [SerializeField] private GameObject noRestartWarningBubble;
+    [SerializeField] private TMP_Text warningText;
+    [SerializeField] private Button noRestartNextButton;
+
     public GameObject playerPrefab; // 👈 通过 Inspector 挂上 prefab
     public GameObject player;
     private PlayerInventory playerInventory;
@@ -46,10 +55,6 @@ public class GameManager1 : MonoBehaviour
     private int currentLives;
 
     private AudioSource audioSource;
-
-    [Header("Penalty UI")]
-    [SerializeField] private TMP_Text penaltyText;
-    [SerializeField] private CanvasGroup penaltyCanvasGroup;
 
     void Awake()
     {
@@ -113,12 +118,52 @@ public class GameManager1 : MonoBehaviour
 
     void ResetUIElements()
     {
+        // 显示无重来警告
+        ShowNoRestartWarning();
+
+        // 隐藏任务相关UI
+        taskText.gameObject.SetActive(false);
+        taskTextBackground.gameObject.SetActive(false);
+        timerText.gameObject.SetActive(false);
+        resultText.gameObject.SetActive(false);
+        taskDisplay.gameObject.SetActive(false);
+        restartButton.gameObject.SetActive(false);
+        startButton.gameObject.SetActive(false);
+    }
+
+    private void ShowNoRestartWarning()
+    {
+        if (warningText != null)
+        {
+            warningText.text = "This time you cannot restart. Choose wisely.";
+        }
+
+        if (noRestartWarningBubble != null)
+        {
+            noRestartWarningBubble.SetActive(true);
+        }
+
+        // 设置Next按钮点击事件
+        if (noRestartNextButton != null)
+        {
+            noRestartNextButton.onClick.RemoveAllListeners();
+            noRestartNextButton.onClick.AddListener(() =>
+            {
+                noRestartWarningBubble.SetActive(false);
+                ShowTaskUI();
+            });
+        }
+    }
+
+    void ShowTaskUI()
+    {
+        // 显示任务UI
         if (requiredPlants != null && requiredPlants.Length > 0)
         {
             string task = "Find ";
             for (int i = 0; i < requiredPlants.Length; i++)
             {
-                task += requiredPlants[i].itemName;
+                task += $"<b><color=red>{requiredPlants[i].itemName}</color></b>";
                 if (i < requiredPlants.Length - 1) task += " & ";
             }
             task += " in 2 minutes to finish the potion!";
@@ -130,19 +175,10 @@ public class GameManager1 : MonoBehaviour
         }
         taskText.gameObject.SetActive(true);
         taskTextBackground.gameObject.SetActive(true);
-
-        timerText.gameObject.SetActive(false);
-        resultText.gameObject.SetActive(false);
-        taskDisplay.gameObject.SetActive(false);
-        restartButton.gameObject.SetActive(false);
-
         startButton.gameObject.SetActive(true);
 
         startButton.onClick.RemoveAllListeners();
         startButton.onClick.AddListener(StartGame);
-
-        restartButton.onClick.RemoveAllListeners();
-        restartButton.onClick.AddListener(RestartGame);
     }
 
     void StartGame()
@@ -249,21 +285,16 @@ public class GameManager1 : MonoBehaviour
     void EndGame(bool success, string failureReason = "")
     {
         gameEnded = true;
-
         audioSource.Stop();
         if (playerController != null)
             playerController.canMove = false;
-
         resultText.gameObject.SetActive(true);
-
         if (success)
         {
             resultText.text = "Congratulations!\nYou have successfully gathered the plant!";
             PlaySound(successMusic);
-
             treatButton.gameObject.SetActive(true);
             restartButton.gameObject.SetActive(false);
-
             treatButton.onClick.RemoveAllListeners();
             treatButton.onClick.AddListener(GoToTreatment);
         }
@@ -278,10 +309,11 @@ public class GameManager1 : MonoBehaviour
                 resultText.text = "You ran out of lives!\nYou failed to gather the plant.";
             }
             PlaySound(failureMusic);
-
-            restartButton.gameObject.SetActive(true);
+            treatButton.gameObject.SetActive(true);
+            restartButton.gameObject.SetActive(false);
+            treatButton.onClick.RemoveAllListeners();
+            treatButton.onClick.AddListener(GoToTreatment);
         }
-
         foreach (var snake in FindObjectsOfType<SnakeController>())
         {
             if (snake != null)
@@ -403,7 +435,7 @@ public class GameManager1 : MonoBehaviour
 
     public void GoToTreatment()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("TreatmentScene");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("TreatmentScene-1");
     }
 
     public Transform PlayerTransform => player != null ? player.transform : null;

@@ -32,4 +32,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/FieldScene-1.unity
     guid: cc68bc02a6b44bf4e90a00c4c794ba1c
+  - enabled: 1
+    path: Assets/Scenes/TreatmentScene-1.unity
+    guid: 30ded763e4f7c7f469754c313bcb6029
   m_configObjects: {}

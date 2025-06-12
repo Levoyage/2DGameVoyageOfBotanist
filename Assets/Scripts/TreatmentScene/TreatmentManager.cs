@@ -4,7 +4,6 @@ using TMPro;
 using System.Collections.Generic;
 using System.Collections;
 
-
 public class TreatmentManager : MonoBehaviour
 {
     [Header("Panels")]
@@ -123,8 +122,6 @@ public class TreatmentManager : MonoBehaviour
         }
 
         StartCoroutine(ForceRebuildLayoutNextFrame());
-
-
     }
 
     void StartTreatment(string method)
@@ -190,10 +187,9 @@ public class TreatmentManager : MonoBehaviour
 
     void ApplyTreatmentSuccess()
     {
-        Debug.Log("[Treatment] Success! +5 gold, +1 supply");
+        Debug.Log("[Treatment] Success! +5 gold");
 
         GameStateManager.Instance.gold += 5;
-        GameStateManager.Instance.supplyPacks += 1;
         GameStateManager.Instance.patientsCured += 1;
 
         PlayerInventory inv = FindObjectOfType<PlayerInventory>();
@@ -253,7 +249,7 @@ public class TreatmentManager : MonoBehaviour
 
     private IEnumerator ForceRebuildLayoutNextFrame()
     {
-        yield return null; // 等待一帧，确保 UI 激活完成
+        yield return null;
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(plantNameText.rectTransform);
         LayoutRebuilder.ForceRebuildLayoutImmediate(patientNameText.rectTransform);

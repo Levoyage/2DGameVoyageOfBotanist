@@ -506,8 +506,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -1.7699, y: -489.2557}
-  m_SizeDelta: {x: 547.7557, y: 141.8585}
+  m_AnchoredPosition: {x: -8.164, y: -556.854}
+  m_SizeDelta: {x: 609.874, y: 231.382}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &199093028
 CanvasRenderer:
@@ -564,8 +564,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35
-  m_fontSizeBase: 35
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2575,6 +2575,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  offset: {x: 0, y: 0, z: -10}
 --- !u!81 &1628947914
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2684,8 +2685,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 27, y: 14.398}
-  m_SizeDelta: {x: 471.7605, y: 859.528}
+  m_AnchoredPosition: {x: 37.048, y: 27.188}
+  m_SizeDelta: {x: 541.187, y: 1058.671}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1890822396
 CanvasRenderer:

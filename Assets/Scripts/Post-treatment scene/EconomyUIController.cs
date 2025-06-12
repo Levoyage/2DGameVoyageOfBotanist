@@ -6,7 +6,6 @@ public class EconomyUIController : MonoBehaviour
     public GameObject frameGroup; // 🎯 你用来显示Gold+Supply的Frame整体
 
     public TMP_Text goldText;
-    public TMP_Text supplyText;
 
     private bool isVisible = false;
 
@@ -30,8 +29,5 @@ public class EconomyUIController : MonoBehaviour
 
         if (goldText != null)
             goldText.text = GameStateManager.Instance.gold.ToString();
-
-        if (supplyText != null)
-            supplyText.text = GameStateManager.Instance.supplyPacks.ToString();
     }
 }

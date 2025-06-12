@@ -12,10 +12,6 @@ public class QTERhythmManager : MonoBehaviour
         KeyCode.UpArrow,
         KeyCode.RightArrow,
         KeyCode.DownArrow,
-        KeyCode.LeftArrow,
-        KeyCode.DownArrow,
-        KeyCode.LeftShift,
-        KeyCode.Return
     };
 
     public float totalQTETime = 8f;

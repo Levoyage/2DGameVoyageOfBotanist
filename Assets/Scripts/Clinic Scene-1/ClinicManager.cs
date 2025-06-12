@@ -59,15 +59,15 @@ public class ClinicManager : MonoBehaviour
 
 
     private string[] herbIntroLines = {
-        "From now on, you'll carry your own satchel for herbs. Keep it tidy.",
-        "We've also compiled an encyclopedia for the plants you find.",
+        "From now on, you'll carry your own <color=red><b>satchel</b></color> for herbs. Keep it tidy.",
+        "We've also compiled an <color=red><b>encyclopedia</b></color> for the plants you find.",
         "Check it often — knowledge saves lives."
     };
 
-    private string codexInstruction = "This is your encyclopedia. It shall preserve records of the plants you collect. <color=red><b>Click >> to open it.</b></color>";
-    private string satchelInstruction = "This is your satchel. It contains only the plants you have gathered correctly.";
-    private string tabInstructionLine = "Press Tab to open your encyclopedia and satchel.";
-    private string secondTabInstruction = "Press <color=red><b>Tab</b></color> again or click <b><color=#9C7B54>'x'</color></b> to proceed →";
+    private string codexInstruction = "This is your <color=red><b>encyclopedia</b></color>. It shall preserve records of the plants you collect. <color=red><b>Click >> to open it.</b></color>";
+    private string satchelInstruction = "This is your <color=red><b>satchel</b></color>. It contains only the plants you have gathered correctly.";
+    private string tabInstructionLine = "Press          to open your encyclopedia and satchel.";
+    private string secondTabInstruction = "Press            again or click <b><color=#9C7B54>'x'</color></b> to proceed →";
 
     private string[] patientDialogue = {
         "My heart races, and I feel faint just walking.",
@@ -75,14 +75,14 @@ public class ClinicManager : MonoBehaviour
     };
 
     private string[] patient2Dialogue = {
-        "Nausea grips me every morning, I can't keep food down.",
+        "I’ve lost my appetite completely. Food just won’t stay down.",
         "It feels like the world spins when I try to eat."
     };
 
     private string[] patient2DiagnosisOptions = { "Nausea", "Migraine", "Food Poisoning" };
 
     private string mentorIntroLine1 = "You've done well with simple cases. But this time, two patients await. Diagnose carefully and gather the herbs yourself.";
-    private string mentorIntroLine2 = "If you fail to collect the herbs, the <color=red><b>supply pack</b></color> may suffice — but now we have only <color=red><b>one</b></color>. Choose wisely, or their fates may be sealed.";
+    private string mentorIntroLine2 = "If you fail to collect the herbs, <color=red><b>there will be no second chances</b></color> — choose wisely, or their fates may be sealed.";
     private string mentorQuestion = "What is your diagnosis, apprentice?";
 
     private int herbIntroIndex = 0;
@@ -445,6 +445,13 @@ public class ClinicManager : MonoBehaviour
         patientDialogueText.text = patient2Dialogue[patient2DialogueIndex++];
         currentStage = Stage.PatientDialogue;
     }
+
+    public void HideCodexInstructionBubble()
+    {
+        if (codexInstructionBubble != null)
+            codexInstructionBubble.SetActive(false);
+    }
+
 
     public void GoToFieldScene()
     {
