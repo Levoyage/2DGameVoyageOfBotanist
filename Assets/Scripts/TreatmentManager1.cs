@@ -7,32 +7,23 @@ public class TreatmentManager1 : MonoBehaviour
 {
     [Header("Panels")]
     public GameObject diagnosisPanel;
+    public GameObject instructionPanel;
     public GameObject treatmentPanel;
-    public GameObject medicineResultPanel;
+    public GameObject resultPanel;
 
     [Header("UI Elements")]
     public TMP_Text patientInfoText;
     public TMP_Text preparedPlantsText;
-    public Button boilButton;
-    public Button grindButton;
-    public Button brewButton;
-    public Button retryButton;
-    public Button continueButton;
-
-    [Header("Instruction")]
-    public GameObject instructionPanel;
-    public TMP_Text instructionText;
-    public Button instructionContinueButton;
-
-    [Header("QTE Ready Prompt")]
-    public GameObject qteReadyPanel;
-    public TMP_Text qteReadyText;
-    public Button qteStartButton;
-
-    [Header("Result UI")]
     public TMP_Text resultText;
     public Image successImage;
     public Image failureImage;
+
+    [Header("Buttons")]
+    public Button brewButton;
+    public Button instructionContinueButton;
+    public Button boilButton;
+    public Button grindButton;
+    public Button continueButton;
 
     [Header("Celebration Effect")]
     public GameObject[] confettiPrefabs;
@@ -44,10 +35,12 @@ public class TreatmentManager1 : MonoBehaviour
     private ItemData[] requiredPlants;
     private int requiredCount;
     private int collectedCount;
+    private string correctMethod = "boil";
+    private string selectedMethod = "";
 
     void Start()
     {
-        // 初始化收集数据
+        // Initialize plant data
         requiredPlants = GameStateManager.Instance.requiredPlants;
         requiredCount = requiredPlants.Length;
         collectedCount = 0;
@@ -55,33 +48,35 @@ public class TreatmentManager1 : MonoBehaviour
             if (PlayerInventory.Instance.GetPlantCount(item) > 0)
                 collectedCount++;
 
-        // 隐藏所有面板
+        // Auto game over if not all collected
+        if (collectedCount < requiredCount)
+        {
+            ShowGameOver();
+            return;
+        }
+
+        // Show initial diagnosis panel
         diagnosisPanel.SetActive(true);
         instructionPanel.SetActive(false);
         treatmentPanel.SetActive(false);
-        qteReadyPanel.SetActive(false);
-        medicineResultPanel.SetActive(false);
+        resultPanel.SetActive(false);
 
-        // 显示患者信息和所需草药列表
+        // Populate UI
         patientInfoText.text = "Two patients await treatment!";
         preparedPlantsText.text = $"Herbs needed: {string.Join(", ", System.Array.ConvertAll(requiredPlants, p => p.itemName))}";
 
-        // 绑定诊断按钮
+        // Bind buttons
         brewButton.onClick.RemoveAllListeners();
         brewButton.onClick.AddListener(ShowInstructionPanel);
 
-        // 绑定指令面板继续按钮
         instructionContinueButton.onClick.RemoveAllListeners();
-        instructionContinueButton.onClick.AddListener(EnterTreatmentPhase);
+        instructionContinueButton.onClick.AddListener(StartTreatmentPhase);
 
-        // 绑定治疗面板操作，示例直接跳转结果
         boilButton.onClick.RemoveAllListeners();
-        boilButton.onClick.AddListener(ShowResult);
         grindButton.onClick.RemoveAllListeners();
-        grindButton.onClick.AddListener(ShowResult);
-        brewButton.onClick.AddListener(ShowResult);
+        boilButton.onClick.AddListener(() => OnTreatmentStep("boil"));
+        grindButton.onClick.AddListener(() => OnTreatmentStep("grind"));
 
-        // 绑定结果面板按钮
         continueButton.onClick.RemoveAllListeners();
         continueButton.onClick.AddListener(OnContinue);
     }
@@ -90,43 +85,66 @@ public class TreatmentManager1 : MonoBehaviour
     {
         diagnosisPanel.SetActive(false);
         instructionPanel.SetActive(true);
-        instructionText.text = "Prepare the medicine with the herbs you collected.";
+        patientInfoText.text = "Prepare the medicine with the herbs you collected.";
     }
 
-    void EnterTreatmentPhase()
+    void StartTreatmentPhase()
     {
         instructionPanel.SetActive(false);
         treatmentPanel.SetActive(true);
     }
 
-    void ShowResult()
+    void OnTreatmentStep(string method)
     {
-        treatmentPanel.SetActive(false);
-        medicineResultPanel.SetActive(true);
-        retryButton.gameObject.SetActive(false);
-        continueButton.gameObject.SetActive(false);
+        selectedMethod = method;
 
-        if (collectedCount >= requiredCount)
+        treatmentPanel.SetActive(false);
+        resultPanel.SetActive(true);
+
+        bool success = method == correctMethod;
+        if (success)
         {
-            successImage.gameObject.SetActive(true);
-            failureImage.gameObject.SetActive(false);
-            resultText.text = "Excellent! All required herbs collected.";
-            PlayConfetti();
-            continueButton.gameObject.SetActive(true);
+            ShowSuccess();
         }
         else
         {
-            successImage.gameObject.SetActive(false);
-            failureImage.gameObject.SetActive(true);
-            resultText.text = "You failed to collect all required herbs. Game Over.";
-            continueButton.gameObject.SetActive(true);
-            if (failSound != null)
-                AudioSource.PlayClipAtPoint(failSound, Vector3.zero);
+            ShowGameOver();
         }
+    }
+
+    void ShowSuccess()
+    {
+        successImage.gameObject.SetActive(true);
+        failureImage.gameObject.SetActive(false);
+        resultText.text = "Excellent! All required herbs collected and medicine prepared.";
+        PlayConfetti();
+        continueButton.gameObject.SetActive(true);
+
+        if (failSound != null)
+            AudioSource.PlayClipAtPoint(failSound, Vector3.zero);
+    }
+
+    void ShowGameOver()
+    {
+        diagnosisPanel.SetActive(false);
+        instructionPanel.SetActive(false);
+        treatmentPanel.SetActive(false);
+        resultPanel.SetActive(true);
+        successImage.gameObject.SetActive(false);
+        failureImage.gameObject.SetActive(true);
+        resultText.text = "Game Over: insufficient herbs.";
+        continueButton.gameObject.SetActive(true);
+        continueButton.onClick.RemoveAllListeners();
+        continueButton.onClick.AddListener(() =>
+        {
+            // Return to clinic before field scene
+            SceneManager.LoadScene("ClinicScene-1");
+        });
     }
 
     void OnContinue()
     {
+        // Proceed to post-treatment
         SceneManager.LoadScene("PostTreatmentScene");
     }
 
@@ -136,46 +154,5 @@ public class TreatmentManager1 : MonoBehaviour
         {
             Instantiate(prefab, confettiCanvas.transform);
         }
-    }
-
-    void CheckTreatmentCompletion()
-    {
-        int collectedCount = 0;
-        int requiredCount = requiredPlants.Length;
-
-        foreach (var plant in requiredPlants)
-        {
-            if (PlayerInventory.Instance.GetPlantCount(plant) > 0)
-            {
-                collectedCount++;
-            }
-        }
-
-        if (collectedCount >= requiredCount)
-        {
-            resultText.text = "Medicine prepared!";
-            resultText.gameObject.SetActive(true);
-            continueButton.gameObject.SetActive(true);
-            continueButton.onClick.RemoveAllListeners();
-            continueButton.onClick.AddListener(GoToPostTreatment);
-        }
-        else
-        {
-            resultText.text = $"You collected {collectedCount}/{requiredCount} herbs. Game Over.";
-            resultText.gameObject.SetActive(true);
-            continueButton.gameObject.SetActive(true);
-            continueButton.onClick.RemoveAllListeners();
-            continueButton.onClick.AddListener(GoToGameOver);
-        }
-    }
-
-    void GoToPostTreatment()
-    {
-        SceneManager.LoadScene("PostTreatmentScene");
-    }
-
-    void GoToGameOver()
-    {
-        SceneManager.LoadScene("GameOverScene");
     }
 }

@@ -815,24 +815,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   diagnosisPanel: {fileID: 1250430596}
+  instructionPanel: {fileID: 81739810}
   treatmentPanel: {fileID: 1419682444}
-  medicineResultPanel: {fileID: 832580571}
+  resultPanel: {fileID: 832580571}
   patientInfoText: {fileID: 958253515}
   preparedPlantsText: {fileID: 373189816}
-  boilButton: {fileID: 910146179}
-  grindButton: {fileID: 1331461917}
-  brewButton: {fileID: 1990837878}
-  retryButton: {fileID: 2070419484}
-  continueButton: {fileID: 4089222}
-  instructionPanel: {fileID: 81739810}
-  instructionText: {fileID: 855081971}
-  instructionContinueButton: {fileID: 291680493}
-  qteReadyPanel: {fileID: 216637177}
-  qteReadyText: {fileID: 604156543}
-  qteStartButton: {fileID: 1080549193}
   resultText: {fileID: 1524749187}
   successImage: {fileID: 792877477}
   failureImage: {fileID: 1531009877}
+  brewButton: {fileID: 1990837878}
+  instructionContinueButton: {fileID: 291680493}
+  boilButton: {fileID: 910146179}
+  grindButton: {fileID: 1331461917}
+  continueButton: {fileID: 4089222}
   confettiPrefabs:
   - {fileID: 3530445100824331204, guid: cd195008bf87d2d45aadf70b9a639c42, type: 3}
   - {fileID: 1823352025963561600, guid: b63fb67f8b10c5f42b20471230906899, type: 3}
@@ -2826,8 +2821,9 @@ MonoBehaviour:
   collectedPlant: {fileID: 0}
   currentDisease: 
   gold: 0
-  supplyPacks: 3
   patientsCured: 0
+  currentDay: 1
+  isTutorial: 1
   mountainMapUnlocked: 0
   canyonMapUnlocked: 0
   requiredPlants: []
