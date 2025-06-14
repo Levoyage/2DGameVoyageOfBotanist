@@ -454,53 +454,6 @@ MonoBehaviour:
   treeTileID: 4
   wallThreshold: 3
   playerSpawnPoint: {x: -1, y: -1}
---- !u!1 &232554761
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 232554763}
-  - component: {fileID: 232554762}
-  m_Layer: 0
-  m_Name: PlayerInventory
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &232554762
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 232554761}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01620d72e0e9d564e887eda10c011319, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inventoryUI: {fileID: 0}
-  slotGrid: {fileID: 0}
-  slots: []
---- !u!4 &232554763
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 232554761}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.084839, y: 0.59168035, z: 4.6960416}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &244652579
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1400,7 +1353,7 @@ MonoBehaviour:
   width: 50
   height: 30
   iterations: 5
-  initialWallChance: 0.5
+  initialWallChance: 0.351
   floorTileID: 0
   treeTileID: 4
   wallThreshold: 5
@@ -3184,51 +3137,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1521624567}
   m_CullTransparentMesh: 1
---- !u!1 &1689893794
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1689893796}
-  - component: {fileID: 1689893795}
-  m_Layer: 0
-  m_Name: 'GlobalBackpackManager '
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1689893795
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1689893794}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3023fd033f5c49340a5c79915fd76c54, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  backpackUIPrefab: {fileID: 6046980511286408659, guid: 0950a7883fb02e949a44007ce90f4339, type: 3}
---- !u!4 &1689893796
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1689893794}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 333.7044, y: 290.16916, z: 2.041954}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1713390212
 GameObject:
   m_ObjectHideFlags: 0
@@ -3776,7 +3684,6 @@ SceneRoots:
   - {fileID: 2051597798}
   - {fileID: 1499262941}
   - {fileID: 1381499682}
-  - {fileID: 232554763}
   - {fileID: 525055787}
   - {fileID: 1293136501}
   - {fileID: 586851312}
@@ -3784,5 +3691,4 @@ SceneRoots:
   - {fileID: 283643035}
   - {fileID: 491780489}
   - {fileID: 1713390214}
-  - {fileID: 1689893796}
   - {fileID: 8609180}

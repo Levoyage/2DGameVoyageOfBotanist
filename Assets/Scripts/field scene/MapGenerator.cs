@@ -24,7 +24,7 @@ public class MapGenerator : MonoBehaviour
     public Vector2Int playerSpawnPoint = new Vector2Int(-1, -1);
     public HashSet<Vector2Int> MainRegion { get; private set; }
 
-    private int maxRetries = 20;
+    private int maxRetries = 50;
     private int retryCount = 0;
 
     void Start()
@@ -165,7 +165,7 @@ public class MapGenerator : MonoBehaviour
         } while (removed);
 
         // Final spawn safety check
-        if (!IsSpawnPointTrulyFree(playerSpawnPoint, 130))
+        if (!IsSpawnPointTrulyFree(playerSpawnPoint, 110))
         {
             Debug.LogWarning("[SpawnCheck] Spawn area too constrained — regenerating map...");
             GenerateMap();
@@ -251,7 +251,7 @@ public class MapGenerator : MonoBehaviour
         switch (theme)
         {
             case MapTheme.Forest:
-                initialWallChance = 0.60f;
+                initialWallChance = 0.58f;
                 break;
             case MapTheme.Mountain:
                 initialWallChance = 0.45f;

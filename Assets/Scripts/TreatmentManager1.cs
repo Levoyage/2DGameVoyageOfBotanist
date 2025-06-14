@@ -41,6 +41,25 @@ public class TreatmentManager1 : MonoBehaviour
 
     void Start()
     {
+
+        // debug:  打印当前背包物品内容
+
+        Debug.Log("👜 Inventory Check: " + (PlayerInventory.Instance != null));
+
+        if (PlayerInventory.Instance != null)
+        {
+            foreach (var slot in PlayerInventory.Instance.slots)
+            {
+                Debug.Log($"[Inventory Slot] {slot.item?.itemName ?? "Empty"} ×{slot.quantity}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("❌ PlayerInventory.Instance is NULL at TreatmentScene-1 Start.");
+        }
+
+
+
         audioSource = gameObject.AddComponent<AudioSource>();
 
         // 初始化植物数据
