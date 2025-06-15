@@ -48,15 +48,15 @@ public class TreatmentManager1 : MonoBehaviour
 
         if (PlayerInventory.Instance != null)
         {
-            foreach (var slot in PlayerInventory.Instance.slots)
-            {
-                Debug.Log($"[Inventory Slot] {slot.item?.itemName ?? "Empty"} ×{slot.quantity}");
-            }
+            Debug.Log("✅ PlayerInventory.Instance is from: " + PlayerInventory.Instance.gameObject.name);
+            // ...原有逻辑...
         }
         else
         {
-            Debug.LogWarning("❌ PlayerInventory.Instance is NULL at TreatmentScene-1 Start.");
+            Debug.LogWarning("❌ PlayerInventory.Instance is NULL in TreatmentScene-1");
         }
+
+
 
 
 

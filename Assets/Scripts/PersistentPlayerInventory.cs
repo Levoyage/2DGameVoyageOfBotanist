@@ -2,16 +2,25 @@ using UnityEngine;
 
 public class PersistentPlayerInventory : MonoBehaviour
 {
+    public PlayerInventory inventory;
+
     void Awake()
     {
-        if (FindObjectsOfType<PersistentPlayerInventory>().Length > 1)
+        if (inventory == null)
         {
-            Destroy(gameObject); // 防止重复
-            return;
+            inventory = FindObjectOfType<PlayerInventory>();
         }
 
-        DontDestroyOnLoad(gameObject);
-        gameObject.AddComponent<PlayerInventory>(); // ✅ 关键：确保 PlayerInventory 永远存在
-    }
+        if (inventory != null)
+        {
+            DontDestroyOnLoad(inventory.gameObject);
+            Debug.Log("📌 Persisting PlayerInventory: " + inventory.name);
+        }
+        else
+        {
+            Debug.LogError("❌ Could not find PlayerInventory to persist.");
+        }
 
+        DontDestroyOnLoad(gameObject); // 让自己也不被销毁
+    }
 }

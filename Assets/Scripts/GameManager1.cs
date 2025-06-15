@@ -66,6 +66,8 @@ public class GameManager1 : MonoBehaviour
 
     void Start()
     {
+
+
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.loop = true;
 
@@ -74,7 +76,7 @@ public class GameManager1 : MonoBehaviour
 
     void InitializeGameState()
     {
-        playerInventory = player.GetComponent<PlayerInventory>();
+        playerInventory = PlayerInventory.Instance;
         playerController = player.GetComponent<PlayerController>();
 
         if (playerController != null)

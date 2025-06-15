@@ -156,7 +156,7 @@ public class BackpackSystemManager : MonoBehaviour
             Debug.LogWarning("❌ parentUI is null when trying to open backpack.");
         }
 
-        PlayerInventory playerInv = FindObjectOfType<PlayerInventory>();
+        PlayerInventory playerInv = PlayerInventory.Instance;
         if (playerInv != null)
         {
             playerInv.RefreshUI();

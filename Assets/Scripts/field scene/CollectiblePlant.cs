@@ -82,9 +82,22 @@ public class CollectiblePlant : MonoBehaviour
             }
 
             if (isCorrect)
-                player.GetComponent<PlayerInventory>()?.AddPlant(plantData);
+            {
+                if (PlayerInventory.Instance != null)
+                {
+                    PlayerInventory.Instance.AddPlant(plantData);
+                    Debug.Log($"✅ Collected: {plantData.itemName} into global PlayerInventory ({PlayerInventory.Instance.name})");
+                }
+                else
+                {
+                    Debug.LogWarning("❌ PlayerInventory.Instance is NULL when collecting plant.");
+                }
+            }
             else
+            {
                 gm1.ApplyWrongPlantPenalty();
+            }
+
         }
         else
         {
