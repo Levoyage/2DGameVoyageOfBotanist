@@ -38,7 +38,7 @@ public class TileManager : MonoBehaviour
 
     void Update()
     {
-        Transform player = GameManager.Instance.PlayerTransform;
+
         // 自动尝试重新连接 Player 引用
         if (player == null)
         {

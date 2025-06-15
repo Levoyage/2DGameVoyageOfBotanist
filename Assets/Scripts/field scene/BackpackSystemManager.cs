@@ -111,7 +111,8 @@ public class BackpackSystemManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.1f); // 等待 PlayerInventory 完成 Start()
 
-        PlayerInventory inv = FindObjectOfType<PlayerInventory>();
+        PlayerInventory inv = PlayerInventory.Instance;
+
         if (inv != null && backpackInstance != null)
         {
             BackPackUI ui = backpackInstance.GetComponent<BackPackUI>();
@@ -157,6 +158,7 @@ public class BackpackSystemManager : MonoBehaviour
         }
 
         PlayerInventory playerInv = PlayerInventory.Instance;
+
         if (playerInv != null)
         {
             playerInv.RefreshUI();

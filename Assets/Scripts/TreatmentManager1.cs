@@ -42,19 +42,16 @@ public class TreatmentManager1 : MonoBehaviour
     void Start()
     {
 
-        // debug:  打印当前背包物品内容
-
-        Debug.Log("👜 Inventory Check: " + (PlayerInventory.Instance != null));
-
         if (PlayerInventory.Instance != null)
         {
             Debug.Log("✅ PlayerInventory.Instance is from: " + PlayerInventory.Instance.gameObject.name);
-            // ...原有逻辑...
+
+            foreach (var slot in PlayerInventory.Instance.slots)
+            {
+                Debug.Log($"🔍 Inventory Slot: {slot.item?.itemName ?? "Empty"} × {slot.quantity}");
+            }
         }
-        else
-        {
-            Debug.LogWarning("❌ PlayerInventory.Instance is NULL in TreatmentScene-1");
-        }
+
 
 
 

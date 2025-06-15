@@ -192,7 +192,8 @@ public class TreatmentManager : MonoBehaviour
         GameStateManager.Instance.gold += 5;
         GameStateManager.Instance.patientsCured += 1;
 
-        PlayerInventory inv = FindObjectOfType<PlayerInventory>();
+        PlayerInventory inv = PlayerInventory.Instance;
+
         if (inv != null && preparedMedicine != null)
         {
             inv.AddItem(preparedMedicine);

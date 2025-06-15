@@ -288,20 +288,25 @@ public class GameManager1 : MonoBehaviour
 
     void RestartGame()
     {
-        if (player != null)
+        // 1️⃣ 优先复用跨场景保留下来的玩家
+        if (PlayerInventory.Instance != null)
         {
-            Destroy(player);
+            player = PlayerInventory.Instance.gameObject;
         }
 
-        player = Instantiate(playerPrefab);
+        // 2️⃣ 只有在极端情况下（第一次游戏、或手滑删了玩家）才生成
+        if (player == null)
+        {
+            player = Instantiate(playerPrefab);
+            DontDestroyOnLoad(player);          // 让它继续跨场景
+        }
+
+        // 3️⃣ 统一设置好 Tag / 名字，方便别的脚本用 Find
         player.tag = "Player";
         player.name = "Player";
 
-        StartCoroutine(CheckIfPlayerSurvives()); // 👈 检查是否被删了
-
+        // 4️⃣ 把 Transform 递给 TileManager
         tileManager.player = player.transform;
-
-        Debug.Log("✅ PLAYER INSTANTIATED: " + player.name);
 
         mapGenerator.GenerateMap();
 

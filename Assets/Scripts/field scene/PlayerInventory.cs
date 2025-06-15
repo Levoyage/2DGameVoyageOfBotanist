@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class PlayerInventory : MonoBehaviour
 {
-    public static PlayerInventory Instance;
+    public static PlayerInventory Instance { get; private set; }
 
     public GameObject inventoryUI;     // UI面板本体（可选，用于显示控制）
     public Transform slotGrid;         // 格子容器（SlotLight）
@@ -13,8 +13,13 @@ public class PlayerInventory : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
-        Debug.Log("👤 PlayerInventory Awake: " + name);
+        DontDestroyOnLoad(gameObject); // 若想保留它在多个 scene 中
     }
 
     private void Start()
