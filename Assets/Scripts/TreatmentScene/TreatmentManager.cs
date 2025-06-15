@@ -35,7 +35,7 @@ public class TreatmentManager : MonoBehaviour
     public Button qteStartButton;
 
     [Header("Settings")]
-    public ItemData preparedMedicine;
+    //public ItemData preparedMedicine;
     private string correctMethod = "boil";
     private string selectedMethod = "";
 
@@ -194,11 +194,20 @@ public class TreatmentManager : MonoBehaviour
 
         PlayerInventory inv = PlayerInventory.Instance;
 
-        if (inv != null && preparedMedicine != null)
+        // ① 消耗原料（就是那株采来的 Pimpernel）
+        ItemData rawPlant = GameStateManager.Instance.collectedPlant;
+        if (inv != null && rawPlant != null)
         {
-            inv.AddItem(preparedMedicine);
-            Debug.Log($"[Inventory] Added medicine: {preparedMedicine.itemName}");
+            inv.RemoveItem(rawPlant);               // ← 扣掉 1 株
+            GameStateManager.Instance.collectedPlant = null;  // 标记已用
         }
+
+        // ② 不再把药剂放进背包
+        // if (inv != null && preparedMedicine != null)
+        // {
+        //     inv.AddItem(preparedMedicine);
+        //     Debug.Log($"[Inventory] Added medicine: {preparedMedicine.itemName}");
+        // }
 
         treatmentPanel.SetActive(false);
         medicineResultPanel.SetActive(true);

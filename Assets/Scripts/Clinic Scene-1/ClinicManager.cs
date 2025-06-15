@@ -106,6 +106,9 @@ public class ClinicManager : MonoBehaviour
 
     void Start()
     {
+
+        PlayerInventory.Instance.RefreshUI();
+
         //ensure GameStateManager exists（方便跳过前面的scenes）
         if (GameStateManager.Instance == null)
         {

@@ -37,6 +37,39 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 消耗 / 移除背包中的物品
+    /// </summary>
+    /// <param name="item">要移除的 ItemData</param>
+    /// <param name="amount">数量（默认 1）</param>
+    /// <returns>移除成功则返回 true，失败（数量不足 / 没找到）返回 false</returns>
+    public bool RemoveItem(ItemData item, int amount = 1)
+    {
+        if (item == null || amount <= 0)
+        {
+            Debug.LogWarning("⚠️ RemoveItem 参数非法。");
+            return false;
+        }
+
+        SlotData slot = FindSlotForItem(item);
+        if (slot == null || slot.quantity < amount)
+        {
+            Debug.LogWarning($"❌ 无法移除 {amount} × {item.itemName} —— 数量不足或不存在。");
+            return false;
+        }
+
+        slot.quantity -= amount;
+
+        // 如果数量耗尽就清空格子
+        if (slot.quantity <= 0)
+        {
+            slot.ClearSlot();
+        }
+
+        UpdateInventoryUI();
+        Debug.Log($"🗑️ Consumed {amount} × {item.itemName}");
+        return true;
+    }
 
     /// <summary>
     /// 初始化 24 格空格子
@@ -90,7 +123,11 @@ public class PlayerInventory : MonoBehaviour
     {
         foreach (var slot in slots)
         {
-            if (slot.item == plant)
+            if (slot.item == plant)                    // ① 引用相等
+                return slot;
+
+            if (slot.item != null && plant != null &&  // ② 名字相等
+                slot.item.itemName == plant.itemName)
                 return slot;
         }
         return null;
