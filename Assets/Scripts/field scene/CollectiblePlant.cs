@@ -86,6 +86,10 @@ public class CollectiblePlant : MonoBehaviour
                 if (PlayerInventory.Instance != null)
                 {
                     PlayerInventory.Instance.AddPlant(plantData);
+
+                    // ✅ 添加这一行，记录植物用于下一个治疗场景
+                    GameStateManager.Instance.collectedPlant = plantData;
+
                     Debug.Log($"✅ Collected: {plantData.itemName} into global PlayerInventory ({PlayerInventory.Instance.name})");
                 }
                 else

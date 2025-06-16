@@ -64,6 +64,8 @@ public class ClinicManager : MonoBehaviour
     public ItemData gingerItemData;
 
 
+
+
     private string[] herbIntroLines = {
         "From now on, you'll carry your own <color=red><b>satchel</b></color> for herbs. Keep it tidy.",
         "We've also compiled an <color=red><b>encyclopedia</b></color> for the plants you find.",
@@ -411,6 +413,7 @@ public class ClinicManager : MonoBehaviour
             doctorFeedbackText.gameObject.SetActive(true);
             if (isCorrect)
             {
+                GameStateManager.Instance.currentDisease = choice;
                 nextPatientButton.gameObject.SetActive(true);
                 gatherButton.SetActive(false);
             }
@@ -442,6 +445,7 @@ public class ClinicManager : MonoBehaviour
             doctorFeedbackText.gameObject.SetActive(true);
             if (isCorrect)
             {
+                GameStateManager.Instance.currentDisease = choice;
                 gatherButton.SetActive(true);
                 nextPatientButton.gameObject.SetActive(false);
             }

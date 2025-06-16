@@ -1,198 +1,252 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.SceneManagement;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class TreatmentManager1 : MonoBehaviour
 {
     [Header("Panels")]
     public GameObject diagnosisPanel;
-    public GameObject instructionPanel;
     public GameObject treatmentPanel;
-    public GameObject resultPanel;
+    public GameObject medicineResultPanel;
 
     [Header("UI Elements")]
-    public TMP_Text patientInfoText;
+    public TMP_Text patientNameText;
     public TMP_Text plantNameText;
-    public TMP_Text instructionText;
+    public Button boilButton;
+    public Button grindButton;
+    public Button brewButton;
+    public Button retryButton;
+    public Button continueButton;
     public TMP_Text resultText;
     public Image successImage;
     public Image failureImage;
 
-    [Header("Buttons")]
-    public Button brewButton;
-    public Button instructionContinueButton;
-    public Button boilButton;
-    public Button grindButton;
-    public Button continueButton;
+    [Header("Mentor Dialogue")]
+    public GameObject mentorDialogueBubble;
+    public TMP_Text mentorDialogueText;
+
+    [Header("QTE System")]
+    public QTEProgressBar qteProgressBar;
+    public QTERhythmManager6 qteManager1;
+    public QTERhythmManager6 qteManager2;
+    private QTERhythmManager6 currentQTEManager;
 
     [Header("Celebration Effect")]
-    public GameObject[] confettiPrefabs;
+    public List<GameObject> confettiPrefabs;
     public GameObject confettiCanvas;
 
     [Header("Audio")]
     public AudioClip failSound;
     private AudioSource audioSource;
 
-    private List<ItemData> plantsToTreat = new List<ItemData>();
-    private int currentPlantIndex = 0;
+    private string correctMethod = "boil";
     private string selectedMethod = "";
+
+    private bool isFirstTreatment = true;
+
+    [Header("Picked Plant UI")]
+    public Image pickedPlantImage;
+
 
     void Start()
     {
 
-        if (PlayerInventory.Instance != null)
-        {
-            Debug.Log("✅ PlayerInventory.Instance is from: " + PlayerInventory.Instance.gameObject.name);
-
-            foreach (var slot in PlayerInventory.Instance.slots)
-            {
-                Debug.Log($"🔍 Inventory Slot: {slot.item?.itemName ?? "Empty"} × {slot.quantity}");
-            }
-        }
-
-
-
-
-
 
         audioSource = gameObject.AddComponent<AudioSource>();
 
-        // 初始化植物数据
-        plantsToTreat.Clear();
-        AddIfInInventory("Foxglove");
-        AddIfInInventory("Ginger");
-
-        if (plantsToTreat.Count < 2)
-        {
-            ShowGameOver("You don't have both required herbs.");
-            return;
-        }
-
-        SetupUIForCurrentPlant();
-    }
-
-    void AddIfInInventory(string name)
-    {
-        var inv = PlayerInventory.Instance;
-        foreach (var slot in inv.slots)
-        {
-            if (slot.item != null && slot.item.itemName.ToLower().Contains(name.ToLower()))
-            {
-                plantsToTreat.Add(slot.item);
-                return;
-            }
-        }
-
-    }
-
-    void SetupUIForCurrentPlant()
-    {
-        if (currentPlantIndex >= plantsToTreat.Count)
-        {
-            SceneManager.LoadScene("PostTreatmentScene");
-            return;
-        }
-
-        var currentPlant = plantsToTreat[currentPlantIndex];
-
+        // 初始化 UI 状态
         diagnosisPanel.SetActive(true);
-        instructionPanel.SetActive(false);
         treatmentPanel.SetActive(false);
-        resultPanel.SetActive(false);
 
-        patientInfoText.text = $"Prepare treatment for patient #{currentPlantIndex + 1}";
-        plantNameText.text = $"Using: {currentPlant.itemName}";
+        medicineResultPanel.SetActive(false);
+        retryButton.gameObject.SetActive(false);
+        continueButton.gameObject.SetActive(false);
 
-        brewButton.onClick.RemoveAllListeners();
-        brewButton.onClick.AddListener(() =>
+
+        ShowMentorDialogue(); // ✅ 一开始显示导师讲解
+
+        if (brewButton != null)
         {
-            diagnosisPanel.SetActive(false);
-            instructionPanel.SetActive(true);
-            instructionText.text = $"Prepare the {currentPlant.itemName} carefully...";
-        });
+            brewButton.gameObject.SetActive(true);
+            brewButton.onClick.RemoveAllListeners();
+            brewButton.onClick.AddListener(() =>
+            {
 
-        instructionContinueButton.onClick.RemoveAllListeners();
-        instructionContinueButton.onClick.AddListener(() =>
+                diagnosisPanel.SetActive(false);
+                treatmentPanel.SetActive(true);              // 显示治疗按钮
+                SetupTreatmentPanel();                       // 设置文字内容等
+            });
+        }
+
+
+
+        if (retryButton != null)
+            retryButton.onClick.AddListener(OnRetryClicked);
+
+        if (continueButton != null)
+            continueButton.onClick.AddListener(ShowNextStep);
+    }
+
+    void ShowMentorDialogue()
+    {
+        var plant = GameStateManager.Instance.collectedPlant;
+        string method = correctMethod;
+
+        if (plant == null)
         {
-            instructionPanel.SetActive(false);
-            treatmentPanel.SetActive(true);
-        });
+            Debug.LogWarning("[MentorDialogue] ❌ collectedPlant is NULL!");
+            return;
+        }
+
+        Debug.Log($"[MentorDialogue] ✅ Showing: {plant.itemName} must be {method}");
+
+        mentorDialogueBubble.SetActive(true);
+        mentorDialogueText.text =
+            $"Now, please prepare the medicine. {plant.itemName} must be <u><b>{method.ToUpper()}</b></u> to extract its healing power.";
+    }
+
+
+
+
+    void SetupTreatmentPanel()
+    {
+        var plant = GameStateManager.Instance.collectedPlant;
+        if (plant != null && pickedPlantImage != null)
+        {
+            pickedPlantImage.sprite = plant.itemIcon;
+            pickedPlantImage.enabled = true;
+        }
+
+        string disease = GameStateManager.Instance.currentDisease;
+
+        if (plant != null)
+            plantNameText.text = $"Picked: <color=red>{plant.itemName}</color>";
+
+        if (!string.IsNullOrEmpty(disease))
+            patientNameText.text = $"To cure: <color=red>{disease}</color>";
 
         boilButton.onClick.RemoveAllListeners();
         grindButton.onClick.RemoveAllListeners();
-        boilButton.onClick.AddListener(() => OnTreatmentStep("boil"));
-        grindButton.onClick.AddListener(() => OnTreatmentStep("grind"));
+
+        boilButton.onClick.AddListener(() => StartTreatment("boil"));
+        grindButton.onClick.AddListener(() => StartTreatment("grind"));
+
+        boilButton.interactable = true;
+        grindButton.interactable = true;
     }
 
-    void OnTreatmentStep(string method)
+    void StartTreatment(string method)
     {
         selectedMethod = method;
 
-        treatmentPanel.SetActive(false);
-        resultPanel.SetActive(true);
+        boilButton.interactable = false;
+        grindButton.interactable = false;
 
-        if (method == GetCorrectMethodForCurrentPlant())
+        if (method != correctMethod)
         {
-            ShowSuccess();
+            if (failSound != null)
+                audioSource.PlayOneShot(failSound);
+
+            HandleMistake(method);
+            return;
+        }
+
+        currentQTEManager = isFirstTreatment ? qteManager1 : qteManager2;
+        currentQTEManager.onQTESuccess = EvaluateTreatment;
+        currentQTEManager.onQTEFail = () => HandleMistake(selectedMethod);
+        currentQTEManager.StartQTE();
+    }
+
+
+    void EvaluateTreatment()
+    {
+        if (selectedMethod == correctMethod)
+        {
+            ApplyTreatmentSuccess();
         }
         else
         {
-            ShowGameOver("The preparation failed.");
+            HandleMistake(selectedMethod);
         }
     }
 
-    string GetCorrectMethodForCurrentPlant()
+    void ApplyTreatmentSuccess()
     {
-        var plant = plantsToTreat[currentPlantIndex];
-        if (plant.itemName.ToLower().Contains("foxglove")) return "boil";
-        if (plant.itemName.ToLower().Contains("ginger")) return "grind";
-        return "boil"; // default fallback
-    }
+        Debug.Log("[Treatment] Success! +5 gold");
 
-    void ShowSuccess()
-    {
-        resultText.text = "Well done! The medicine is ready.";
+        GameStateManager.Instance.gold += 5;
+        GameStateManager.Instance.patientsCured += 1;
+
+        ItemData plant = GameStateManager.Instance.collectedPlant;
+        if (plant != null)
+        {
+            PlayerInventory.Instance.RemoveItem(plant);
+            GameStateManager.Instance.collectedPlant = null;
+        }
+
+        treatmentPanel.SetActive(false);
+        medicineResultPanel.SetActive(true);
+        resultText.text = "Well done! The medicine is ready!";
         successImage.gameObject.SetActive(true);
         failureImage.gameObject.SetActive(false);
+        retryButton.gameObject.SetActive(false);
         continueButton.gameObject.SetActive(true);
 
-        if (confettiPrefabs != null && confettiCanvas != null)
-        {
-            foreach (var prefab in confettiPrefabs)
-            {
-                Instantiate(prefab, confettiCanvas.transform);
-            }
-        }
+        SpawnCelebrationEffect();
 
-        continueButton.onClick.RemoveAllListeners();
-        continueButton.onClick.AddListener(() =>
-        {
-            currentPlantIndex++;
-            SetupUIForCurrentPlant();
-        });
+        isFirstTreatment = false;
+
     }
 
-    void ShowGameOver(string message)
+    void HandleMistake(string method)
     {
-        diagnosisPanel.SetActive(false);
-        instructionPanel.SetActive(false);
-        treatmentPanel.SetActive(false);
-        resultPanel.SetActive(true);
+        GameStateManager.Instance.collectedPlant = null;
 
-        resultText.text = $"Game Over: {message}";
+        treatmentPanel.SetActive(false);
+        medicineResultPanel.SetActive(true);
+        resultText.text = "Oh no... The preparation failed.";
         successImage.gameObject.SetActive(false);
         failureImage.gameObject.SetActive(true);
-        continueButton.gameObject.SetActive(true);
+        retryButton.gameObject.SetActive(true);
+        continueButton.gameObject.SetActive(false);
+    }
 
-        if (failSound != null)
-            audioSource.PlayOneShot(failSound);
+    void OnRetryClicked()
+    {
+        retryButton.gameObject.SetActive(false);
+        continueButton.gameObject.SetActive(false);
+        medicineResultPanel.SetActive(false);
+        treatmentPanel.SetActive(true);
 
-        continueButton.onClick.RemoveAllListeners();
-        continueButton.onClick.AddListener(() =>
+        boilButton.interactable = true;
+        grindButton.interactable = true;
+
+        currentQTEManager?.ResetQTE();
+
+    }
+
+    void ShowNextStep()
+    {
+        SceneManager.LoadScene("PostTreatmentScene");
+    }
+
+    void SpawnCelebrationEffect()
+    {
+        if (confettiPrefabs.Count == 0 || confettiCanvas == null) return;
+
+        for (int i = 0; i < 60; i++)
         {
-            SceneManager.LoadScene("ClinicScene-1");
-        });
+            GameObject prefab = confettiPrefabs[Random.Range(0, confettiPrefabs.Count)];
+            GameObject confetti = Instantiate(prefab, confettiCanvas.transform);
+            confetti.transform.localPosition = new Vector3(
+                Random.Range(-500f, 500f),
+                Random.Range(200f, 400f),
+                0f
+            );
+            confetti.transform.localScale = Vector3.one;
+        }
     }
 }
