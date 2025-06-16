@@ -28,6 +28,10 @@ public class TreatmentManager1 : MonoBehaviour
     public GameObject mentorDialogueBubble;
     public TMP_Text mentorDialogueText;
 
+    [Header("Mentor Dialogue Flow")]
+    public Button mentorNextButton;
+
+
     [Header("QTE System")]
     public QTEProgressBar qteProgressBar;
     public QTERhythmManager6 qteManager1;
@@ -56,6 +60,16 @@ public class TreatmentManager1 : MonoBehaviour
     private List<ItemData> treatmentPlants = new List<ItemData>();
     private List<string> treatmentDiseases = new List<string>();
     private List<string> treatmentMethods = new List<string>();
+
+    [Header("Backpack System")]
+    public GameObject backpackUI;
+    public GameObject backpackPromptBubble;
+    public TMP_Text backpackPromptText;
+
+    public Button retryPlantSelectionButton; // 🆕 选择植物失败的 Retry 按钮
+
+
+    private bool awaitingPlantSelection = false;
 
 
 
@@ -89,9 +103,17 @@ public class TreatmentManager1 : MonoBehaviour
 
         ShowMentorDialogue(); // ✅ 一开始显示导师讲解
 
+        // 绑定 next 按钮事件
+        if (mentorNextButton != null)
+        {
+            mentorNextButton.onClick.RemoveAllListeners();
+            mentorNextButton.onClick.AddListener(OnMentorNextClicked);
+            mentorNextButton.gameObject.SetActive(true); // 先显示 mentor next 按钮
+        }
+
         if (brewButton != null)
         {
-            brewButton.gameObject.SetActive(true);
+            brewButton.gameObject.SetActive(false);
             brewButton.onClick.RemoveAllListeners();
             brewButton.onClick.AddListener(() =>
             {
@@ -109,27 +131,51 @@ public class TreatmentManager1 : MonoBehaviour
 
         if (continueButton != null)
             continueButton.onClick.AddListener(ShowNextStep);
+
+        if (retryPlantSelectionButton != null)
+        {
+            retryPlantSelectionButton.gameObject.SetActive(false); // ✅ 先隐藏
+        }
+
     }
 
     void ShowMentorDialogue()
     {
-        var plant = treatmentPlants[currentIndex];  // ✅ 使用当前植物
+        var plant = treatmentPlants[currentIndex];
         string method = correctMethod;
 
         if (plant == null)
         {
-            Debug.LogWarning("[MentorDialogue] ❌ collectedPlant is NULL!");
+            Debug.LogWarning($"[MentorDialogue] ❌ treatmentPlants[{currentIndex}] is NULL!");
             return;
         }
 
-        Debug.Log($"[MentorDialogue] ✅ Showing: {plant.itemName} must be {method}");
+        if (isFirstTreatment)
+        {
+            mentorDialogueBubble.SetActive(true);
+            mentorDialogueText.text = "Do you remember which plant is used to treat <b>Heart Arrhythmia</b>?";
 
-        mentorDialogueBubble.SetActive(true);
-        mentorDialogueText.text =
-            $"Now, please prepare the medicine. {plant.itemName} must be <u><b>{method.ToUpper()}</b></u> to extract its healing power.";
+            // 下一步按钮已由 Start 中控制
+        }
+        else
+        {
+            mentorDialogueBubble.SetActive(true);
+            mentorDialogueText.text =
+                $"Now, please prepare the medicine. {plant.itemName} must be <u><b>{method.ToUpper()}</b></u> to extract its healing power.";
+        }
     }
 
 
+    void Update()
+    {
+        if (awaitingPlantSelection && Input.GetKeyDown(KeyCode.Tab))
+        {
+            if (backpackUI != null)
+            {
+                backpackUI.SetActive(true);
+            }
+        }
+    }
 
 
     void SetupTreatmentPanel()
@@ -292,4 +338,66 @@ public class TreatmentManager1 : MonoBehaviour
             confetti.transform.localScale = Vector3.one;
         }
     }
+
+    public void OnPlantSelected(ItemData selected)
+    {
+        if (!awaitingPlantSelection) return;
+
+        if (selected == foxgloveData)
+        {
+            GameStateManager.Instance.collectedPlant = foxgloveData;
+            correctMethod = "boil";
+
+            mentorDialogueText.text = "Correct. Foxglove must be <b>boiled</b> to extract its healing power.";
+            brewButton.gameObject.SetActive(true);
+            awaitingPlantSelection = false;
+
+            if (backpackPromptBubble != null)
+                backpackPromptBubble.SetActive(false);
+
+            if (backpackUI != null)
+                backpackUI.SetActive(false);
+        }
+        else
+        {
+            mentorDialogueText.text = "That’s not the right plant for this illness.";
+            retryPlantSelectionButton.gameObject.SetActive(true);
+
+        }
+    }
+
+    public void OnRetryPlantSelection()
+    {
+        retryPlantSelectionButton.gameObject.SetActive(false);
+
+        mentorDialogueText.text = "Try again. Which plant treats <b>Heart Arrhythmia</b>?";
+
+        if (backpackPromptBubble != null && backpackPromptText != null)
+        {
+            backpackPromptText.text = "Press          to open your backpack.";
+            backpackPromptBubble.SetActive(true);
+        }
+
+        if (backpackUI != null)
+            backpackUI.SetActive(false);
+
+        awaitingPlantSelection = true;
+    }
+
+    void OnMentorNextClicked()
+    {
+        mentorNextButton.gameObject.SetActive(false); // 隐藏 next 按钮
+
+        if (backpackPromptBubble != null && backpackPromptText != null)
+        {
+            backpackPromptText.text = "Press <b>TAB</b> to open your backpack.";
+            backpackPromptBubble.SetActive(true);
+        }
+
+        awaitingPlantSelection = true;
+    }
+
 }
+
+
+
