@@ -50,12 +50,33 @@ public class TreatmentManager1 : MonoBehaviour
     [Header("Picked Plant UI")]
     public Image pickedPlantImage;
 
+    public ItemData foxgloveData, gingerData;
+    private int currentIndex = 0;
+
+    private List<ItemData> treatmentPlants = new List<ItemData>();
+    private List<string> treatmentDiseases = new List<string>();
+    private List<string> treatmentMethods = new List<string>();
+
+
 
     void Start()
     {
+        treatmentPlants.Add(foxgloveData);
+        treatmentPlants.Add(gingerData);
+
+        treatmentDiseases.Add("Heart Arrhythmia");
+        treatmentDiseases.Add("Nausea");
+
+        treatmentMethods.Add("boil");
+        treatmentMethods.Add("grind");
+
+        GameStateManager.Instance.collectedPlant = treatmentPlants[0]; // 初始为第一株
+        correctMethod = treatmentMethods[0];
 
 
         audioSource = gameObject.AddComponent<AudioSource>();
+
+
 
         // 初始化 UI 状态
         diagnosisPanel.SetActive(true);
@@ -92,7 +113,7 @@ public class TreatmentManager1 : MonoBehaviour
 
     void ShowMentorDialogue()
     {
-        var plant = GameStateManager.Instance.collectedPlant;
+        var plant = treatmentPlants[currentIndex];  // ✅ 使用当前植物
         string method = correctMethod;
 
         if (plant == null)
@@ -113,14 +134,16 @@ public class TreatmentManager1 : MonoBehaviour
 
     void SetupTreatmentPanel()
     {
-        var plant = GameStateManager.Instance.collectedPlant;
+        var plant = treatmentPlants[currentIndex];  // ✅ 使用当前植物
+
         if (plant != null && pickedPlantImage != null)
         {
             pickedPlantImage.sprite = plant.itemIcon;
             pickedPlantImage.enabled = true;
         }
 
-        string disease = GameStateManager.Instance.currentDisease;
+        string disease = treatmentDiseases[currentIndex];  // ✅ 当前疾病名
+
 
         if (plant != null)
             plantNameText.text = $"Picked: <color=red>{plant.itemName}</color>";
@@ -180,7 +203,8 @@ public class TreatmentManager1 : MonoBehaviour
         GameStateManager.Instance.gold += 5;
         GameStateManager.Instance.patientsCured += 1;
 
-        ItemData plant = GameStateManager.Instance.collectedPlant;
+        ItemData plant = treatmentPlants[currentIndex];  // ✅ 使用当前植物
+
         if (plant != null)
         {
             PlayerInventory.Instance.RemoveItem(plant);
@@ -203,8 +227,6 @@ public class TreatmentManager1 : MonoBehaviour
 
     void HandleMistake(string method)
     {
-        GameStateManager.Instance.collectedPlant = null;
-
         treatmentPanel.SetActive(false);
         medicineResultPanel.SetActive(true);
         resultText.text = "Oh no... The preparation failed.";
@@ -230,8 +252,29 @@ public class TreatmentManager1 : MonoBehaviour
 
     void ShowNextStep()
     {
-        SceneManager.LoadScene("PostTreatmentScene");
+        currentIndex++;
+
+        if (currentIndex < treatmentPlants.Count)
+        {
+            // 准备第二轮数据
+            GameStateManager.Instance.collectedPlant = treatmentPlants[currentIndex];
+            correctMethod = treatmentMethods[currentIndex];
+            GameStateManager.Instance.currentDisease = treatmentDiseases[currentIndex];
+
+            // 重置 UI
+            continueButton.gameObject.SetActive(false);
+            successImage.gameObject.SetActive(false);
+            medicineResultPanel.SetActive(false);
+            diagnosisPanel.SetActive(true);
+
+            ShowMentorDialogue();
+        }
+        else
+        {
+            SceneManager.LoadScene("PostTreatmentScene");
+        }
     }
+
 
     void SpawnCelebrationEffect()
     {
