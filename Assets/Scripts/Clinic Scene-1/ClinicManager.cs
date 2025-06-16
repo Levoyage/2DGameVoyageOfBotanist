@@ -22,6 +22,12 @@ public class ClinicManager : MonoBehaviour
     public GameObject mentorDialogueBubble;
     public TextMeshProUGUI mentorDialogueText;
 
+    [Header("Mentor Gift Bubble")]
+    public GameObject mentorGiftBubble;
+    public TextMeshProUGUI mentorGiftText;
+    public Button mentorGiftNextButton;
+
+
     [Header("Diagnosis System")]
     public GameObject diagnosisPanel;
     public Button arrhythmiaButton;
@@ -202,8 +208,22 @@ public class ClinicManager : MonoBehaviour
                     secondInstructionBubble.SetActive(false);
                     promptPanel.SetActive(false);
 
-                    currentStage = Stage.MentorIntro;
-                    ShowNextDialogue();
+                    // ✅ 插入奖励对话
+                    mentorGiftBubble.SetActive(true);
+                    mentorGiftText.text =
+                        "Excellent work with the previous patient. As a reward, you’ve been given <color=red><b>one more Pimpernel</b></color>.";
+
+                    if (portrait != null) portrait.SetActive(true);
+
+                    mentorGiftNextButton.onClick.RemoveAllListeners();
+                    mentorGiftNextButton.onClick.AddListener(() =>
+                    {
+                        mentorGiftBubble.SetActive(false);
+                        mentorIntroStage = 0;             // ← 必须：重置导师引导流程
+                        currentStage = Stage.MentorIntro; // ← 设置正确状态
+                        ShowNextDialogue();               // ← 触发 gatherIntroBubble1
+                    });
+
                     break;
             }
         }
