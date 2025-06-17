@@ -52,6 +52,20 @@ public class PlayerInventory : MonoBehaviour
         }
 
         SlotData slot = FindSlotForItem(item);
+
+        // 🔁 引用匹配找不到，尝试用 itemName 匹配
+        if ((slot == null || slot.quantity < amount) && item.itemName != null)
+        {
+            foreach (var s in slots)
+            {
+                if (s.item != null && s.item.itemName == item.itemName && s.quantity >= amount)
+                {
+                    slot = s;
+                    break;
+                }
+            }
+        }
+
         if (slot == null || slot.quantity < amount)
         {
             Debug.LogWarning($"❌ 无法移除 {amount} × {item.itemName} —— 数量不足或不存在。");
@@ -60,7 +74,6 @@ public class PlayerInventory : MonoBehaviour
 
         slot.quantity -= amount;
 
-        // 如果数量耗尽就清空格子
         if (slot.quantity <= 0)
         {
             slot.ClearSlot();
@@ -209,4 +222,27 @@ public class PlayerInventory : MonoBehaviour
         this.backpackUI = backpackUI;
         RefreshUI();
     }
+
+    public bool RemoveItemByName(string itemName, int amount = 1)
+    {
+        if (string.IsNullOrEmpty(itemName) || amount <= 0)
+            return false;
+
+        foreach (var slot in slots)
+        {
+            if (slot.item != null && slot.item.itemName == itemName && slot.quantity >= amount)
+            {
+                slot.quantity -= amount;
+                if (slot.quantity <= 0)
+                    slot.ClearSlot();
+
+                UpdateInventoryUI();
+                Debug.Log($"🗑️ Consumed {amount} × {itemName} (by name-fallback)");
+                return true;
+            }
+        }
+        Debug.LogWarning($"❌ Tried to remove {itemName}, but it wasn’t found.");
+        return false;
+    }
+
 }

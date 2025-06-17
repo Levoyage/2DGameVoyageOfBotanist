@@ -88,6 +88,7 @@ public class TreatmentManager : MonoBehaviour
             qteReadyPanel.SetActive(false);
 
         audioSource = gameObject.AddComponent<AudioSource>();
+
     }
 
     void CloseInstructionPanel()
@@ -192,23 +193,26 @@ public class TreatmentManager : MonoBehaviour
         GameStateManager.Instance.gold += 5;
         GameStateManager.Instance.patientsCured += 1;
 
+        // ---------- 关键：消耗原料 ----------
+        bool removed = false;
         PlayerInventory inv = PlayerInventory.Instance;
 
-        // ① 消耗原料（就是那株采来的 Pimpernel）
-        ItemData rawPlant = GameStateManager.Instance.collectedPlant;
-        if (inv != null && rawPlant != null)
+        if (inv != null)
         {
-            inv.RemoveItem(rawPlant);               // ← 扣掉 1 株
-            GameStateManager.Instance.collectedPlant = null;  // 标记已用
+            // ① 尝试用引用直接删除
+            ItemData rawPlant = GameStateManager.Instance.collectedPlant;
+            if (rawPlant != null)
+                removed = inv.RemoveItem(rawPlant);
+
+            // ② 如果引用为空或删除失败，就按名字删第一株同名植物
+            if (!removed)
+                removed = inv.RemoveItemByName("Pimpernel");   // ← 如需治疗别的草，请改这里
         }
 
-        // ② 不再把药剂放进背包
-        // if (inv != null && preparedMedicine != null)
-        // {
-        //     inv.AddItem(preparedMedicine);
-        //     Debug.Log($"[Inventory] Added medicine: {preparedMedicine.itemName}");
-        // }
+        // 无论成败都清空引用，防止多次消耗
+        GameStateManager.Instance.collectedPlant = null;
 
+        // ---------- UI 与反馈 ----------
         treatmentPanel.SetActive(false);
         medicineResultPanel.SetActive(true);
         resultText.text = "Well done! The medicine is ready!";

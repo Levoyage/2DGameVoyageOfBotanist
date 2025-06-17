@@ -32,6 +32,11 @@ public class PostTreatmentManager : MonoBehaviour
     private int dialogueIndex = 0;
     private string[] mentorLines;
 
+    [Header("Post-Treatment Continue")]
+    public Button continueButton;
+
+    private Coroutine rewardCoroutine;
+
 
     void Update()
     {
@@ -49,7 +54,12 @@ public class PostTreatmentManager : MonoBehaviour
                 tutorNextButton.onClick.Invoke();
             }
 
-            // 3. 最后一句 mentorLines 出现 → 显示 StartGameButton
+            //3.rewardUIPanel → 导师第二句
+            else if (continueButton != null && continueButton.gameObject.activeInHierarchy)
+            {
+                continueButton.onClick.Invoke();
+            }
+            // 4. 最后一句 mentorLines 出现 → 显示 StartGameButton
             else if (startGameButton != null && startGameButton.gameObject.activeInHierarchy)
             {
                 startGameButton.onClick.Invoke();
@@ -104,6 +114,13 @@ public class PostTreatmentManager : MonoBehaviour
             backButton.onClick.RemoveAllListeners();
             backButton.onClick.AddListener(ShowPreviousMentorLine);
         }
+
+        if (continueButton != null)
+        {
+            continueButton.onClick.RemoveAllListeners();
+            continueButton.onClick.AddListener(ShowFinalMentorLines);
+        }
+
     }
 
     void ShowTutorDialogue()
@@ -150,7 +167,7 @@ public class PostTreatmentManager : MonoBehaviour
         if (textBackground != null)
             textBackground.SetActive(true);
 
-        StartCoroutine(HideRewardAndShowEconomy());
+        rewardCoroutine = StartCoroutine(HideRewardAndShowEconomy());
     }
 
     IEnumerator HideRewardAndShowEconomy()
@@ -212,6 +229,35 @@ public class PostTreatmentManager : MonoBehaviour
             ShowMentorLine();
         }
     }
+
+    void ShowFinalMentorLines()
+    {
+        mentorLines = new string[] {
+        "For each patient you heal, you will earn <color=red><b>5 gold coins</b></color>. When you have enough coins, you can afford to <color=red><b>travel to new places</b></color> to gather herbs.",
+        "Your training is complete. From here, your path lies among wild herbs and ailing souls."
+    };
+
+        dialogueIndex = 0;
+
+        if (continueButton != null)
+            continueButton.gameObject.SetActive(false);  // 隐藏自己
+
+        ShowMentorLine(); // 🔁 使用原有 mentor line 系统展示台词
+
+        if (rewardCoroutine != null)
+        {
+            StopCoroutine(rewardCoroutine);
+            rewardCoroutine = null;
+        }
+
+        if (rewardUIPanel != null)
+            rewardUIPanel.SetActive(false);
+
+        if (textBackground != null)
+            textBackground.SetActive(false);
+
+    }
+
 
     void StartMainGame()
     {

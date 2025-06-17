@@ -664,6 +664,7 @@ MonoBehaviour:
   textBackground: {fileID: 1859698752}
   economyUIObject: {fileID: 423031960}
   rewardSound: {fileID: 8300000, guid: 312fc5f07d348b04fb81a1da04bf7090, type: 3}
+  continueButton: {fileID: 1400825583}
 --- !u!4 &479984939
 Transform:
   m_ObjectHideFlags: 0
