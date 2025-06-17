@@ -84,8 +84,29 @@ public class TreatmentManager1 : MonoBehaviour
         Instance = this;
     }
 
+
+    void EnsureBackpackSystemExists()
+    {
+        if (BackpackSystemManager.Instance == null)
+        {
+            // 尝试从资源加载
+            GameObject prefab = Resources.Load<GameObject>("BackpackSystemManager"); // 📌 确保这个路径正确
+            if (prefab != null)
+            {
+                Instantiate(prefab);
+            }
+            else
+            {
+                Debug.LogError("❌ BackpackSystemManager prefab not found in Resources.");
+            }
+        }
+    }
+
+
     void Start()
     {
+        EnsureBackpackSystemExists();
+
         treatmentPlants.Add(foxgloveData);
         treatmentPlants.Add(gingerData);
 
@@ -400,23 +421,21 @@ public class TreatmentManager1 : MonoBehaviour
 
     public void OnRetryPlantSelection()
     {
+        // ✅ hide mentor dialogue
+        if (mentorDialogueBubble != null)
+            mentorDialogueBubble.SetActive(false);
+        if (mentorPortrait != null)
+            mentorPortrait.SetActive(false);
 
-        Debug.Log("[RetryPlant] Retry button clicked.");
+        // ✅ hide backpack prompt bubble
+        if (backpackPromptBubble != null)
+            backpackPromptBubble.SetActive(false);
 
-        mentorDialogueText.text = "Try again. Which plant treats <b>Heart Arrhythmia</b>?";
-
-        if (backpackPromptBubble != null && backpackPromptText != null)
-        {
-            backpackPromptText.text = "Press          to open your backpack.";
-            backpackPromptBubble.SetActive(true);
-        }
-
+        // ✅ open backpack to retry
         if (BackpackSystemManager.Instance != null)
-            BackpackSystemManager.Instance.CloseBackpack();
-
+            BackpackSystemManager.Instance.OpenBackpack();
 
         awaitingPlantSelection = true;
-
         retryPlantSelectionButton.gameObject.SetActive(false);
     }
 
