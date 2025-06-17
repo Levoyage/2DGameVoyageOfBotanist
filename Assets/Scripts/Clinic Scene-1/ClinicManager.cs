@@ -229,6 +229,26 @@ public class ClinicManager : MonoBehaviour
                     break;
             }
         }
+
+
+        // ✅ 新增：Enter 控制下一步对话（根据阶段判断）
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            switch (currentStage)
+            {
+                case Stage.Intro:
+                case Stage.PatientDialogue:
+                case Stage.MentorIntro:
+                    ShowNextDialogue();
+                    break;
+
+                case Stage.Diagnosis:
+                    break;
+
+                default:
+                    break;
+            }
+        }
     }
 
     public void ShowNextDialogue()

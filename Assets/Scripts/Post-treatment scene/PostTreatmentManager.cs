@@ -32,6 +32,31 @@ public class PostTreatmentManager : MonoBehaviour
     private int dialogueIndex = 0;
     private string[] mentorLines;
 
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            // 1. 初始病人感谢 → 导师第一句
+            if (nextButton != null && nextButton.gameObject.activeInHierarchy)
+            {
+                nextButton.onClick.Invoke();
+            }
+
+            // 2. 导师第一句 → 奖励面板
+            else if (tutorNextButton != null && tutorNextButton.gameObject.activeInHierarchy && !rewardUIPanel.activeInHierarchy)
+            {
+                tutorNextButton.onClick.Invoke();
+            }
+
+            // 3. 最后一句 mentorLines 出现 → 显示 StartGameButton
+            else if (startGameButton != null && startGameButton.gameObject.activeInHierarchy)
+            {
+                startGameButton.onClick.Invoke();
+            }
+        }
+    }
+
     void Start()
     {
         mentorLines = new string[] {

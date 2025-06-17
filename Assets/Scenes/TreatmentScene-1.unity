@@ -600,6 +600,7 @@ MonoBehaviour:
   failureImage: {fileID: 1531009877}
   mentorDialogueBubble: {fileID: 636406517}
   mentorDialogueText: {fileID: 1206820274}
+  mentorPortrait: {fileID: 112979473}
   mentorNextButton: {fileID: 455219463}
   qteProgressBar: {fileID: 1967703635}
   qteManager1: {fileID: 992054906}
@@ -614,7 +615,6 @@ MonoBehaviour:
   pickedPlantImage: {fileID: 1925023415}
   foxgloveData: {fileID: 11400000, guid: 5186e09a093452b48ad043f16db8be5a, type: 2}
   gingerData: {fileID: 11400000, guid: 72b1ec9019bdddb47913fbc3623e557a, type: 2}
-  backpackUI: {fileID: 6046980511286408659, guid: 0950a7883fb02e949a44007ce90f4339, type: 3}
   backpackPromptBubble: {fileID: 335368796}
   backpackPromptText: {fileID: 925161958}
   retryPlantSelectionButton: {fileID: 2128503926}
@@ -1075,7 +1075,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 32.996017, y: -94.39438}
+  m_AnchoredPosition: {x: 31, y: -166}
   m_SizeDelta: {x: 170.6452, y: 61.9358}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &455219463
@@ -3356,8 +3356,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -28.6506, y: 37.5641}
-  m_SizeDelta: {x: 277.6749, y: 112.3946}
+  m_AnchoredPosition: {x: -31.6653, y: 53.4994}
+  m_SizeDelta: {x: 283.7044, y: 80.5241}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1206820273
 CanvasRenderer:
@@ -3618,11 +3618,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 636406518}
   - {fileID: 335368797}
   - {fileID: 112979474}
   - {fileID: 1990837881}
   - {fileID: 455219462}
+  - {fileID: 636406518}
   m_Father: {fileID: 1921048314}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5912,13 +5912,14 @@ GameObject:
   - component: {fileID: 2128503928}
   - component: {fileID: 2128503927}
   - component: {fileID: 2128503926}
+  - component: {fileID: 2128503929}
   m_Layer: 5
   m_Name: retryPlantSelectionButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2128503925
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6033,6 +6034,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2128503924}
   m_CullTransparentMesh: 1
+--- !u!114 &2128503929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128503924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72c2114fd72a53c47ac64b174574b359, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

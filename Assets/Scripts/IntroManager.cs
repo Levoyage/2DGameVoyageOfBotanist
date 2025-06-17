@@ -35,6 +35,19 @@ public class IntroManager : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            // 若按钮是激活的状态
+            if (nextButton != null && nextButton.activeInHierarchy)
+            {
+                NextDialogue();
+            }
+        }
+    }
+
+
     public void NextDialogue()
     {
         currentLine++;
@@ -50,24 +63,24 @@ public class IntroManager : MonoBehaviour
         }
     }
 
-IEnumerator FadeText(string newText, float fadeSpeed = 5f) // 添加可调节参数
-{
-    // Fade out
-    for (float t = 1; t > 0; t -= Time.deltaTime * fadeSpeed)
+    IEnumerator FadeText(string newText, float fadeSpeed = 5f) // 添加可调节参数
     {
-        introText.alpha = t;
-        yield return null;
-    }
+        // Fade out
+        for (float t = 1; t > 0; t -= Time.deltaTime * fadeSpeed)
+        {
+            introText.alpha = t;
+            yield return null;
+        }
 
-    // Change text
-    introText.text = newText;
+        // Change text
+        introText.text = newText;
 
-    // Fade in
-    for (float t = 0; t < 1; t += Time.deltaTime * fadeSpeed)
-    {
-        introText.alpha = t;
-        yield return null;
+        // Fade in
+        for (float t = 0; t < 1; t += Time.deltaTime * fadeSpeed)
+        {
+            introText.alpha = t;
+            yield return null;
+        }
     }
-}
 
 }

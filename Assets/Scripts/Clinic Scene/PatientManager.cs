@@ -47,6 +47,18 @@ public class PatientManager : MonoBehaviour
         scurvyButton.onClick.AddListener(() => CheckDiagnosis("Scurvy"));
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            if (patientDialogueBubble != null && patientDialogueBubble.activeInHierarchy)
+            {
+                ShowNextPatientDialogue();
+            }
+        }
+    }
+
+
     public void ShowNextPatientDialogue()
     {
         if (patientDialogueIndex < patientDialogue.Length)
