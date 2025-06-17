@@ -41,6 +41,11 @@ public class TreatmentManager1 : MonoBehaviour
     public QTERhythmManager6 qteManager2;
     private QTERhythmManager6 currentQTEManager;
 
+    [Header("QTE Panels")]
+    public GameObject QTEpanel1;
+    public GameObject QTEpanel2;
+
+
     [Header("Celebration Effect")]
     public List<GameObject> confettiPrefabs;
     public GameObject confettiCanvas;
@@ -233,7 +238,7 @@ public class TreatmentManager1 : MonoBehaviour
             plantNameText.text = $"Picked: <color=red>{plant.itemName}</color>";
 
         if (!string.IsNullOrEmpty(disease))
-            patientNameText.text = $"To cure: <color=red>{disease}</color>";
+            patientNameText.text = $"<color=red>{disease}</color>";
 
         boilButton.onClick.RemoveAllListeners();
         grindButton.onClick.RemoveAllListeners();
@@ -260,6 +265,9 @@ public class TreatmentManager1 : MonoBehaviour
             HandleMistake(method);
             return;
         }
+
+        if (QTEpanel1 != null) QTEpanel1.SetActive(isFirstTreatment);
+        if (QTEpanel2 != null) QTEpanel2.SetActive(!isFirstTreatment);
 
         currentQTEManager = isFirstTreatment ? qteManager1 : qteManager2;
         currentQTEManager.onQTESuccess = EvaluateTreatment;
