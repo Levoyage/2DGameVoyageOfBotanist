@@ -2972,7 +2972,6 @@ MonoBehaviour:
   qteReadyPanel: {fileID: 2128640843}
   qteReadyText: {fileID: 1977186988}
   qteStartButton: {fileID: 780605987}
-  preparedMedicine: {fileID: 11400000, guid: ad115702ae719504084cdca17df092eb, type: 2}
   resultText: {fileID: 1324174387}
   successImage: {fileID: 896340937}
   failureImage: {fileID: 1078449886}

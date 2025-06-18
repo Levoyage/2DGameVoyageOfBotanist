@@ -33,9 +33,8 @@ public class PostTreatmentManager1 : MonoBehaviour
     [Header("Continue Button")]
     public Button continueButton;
 
-    [Header("Backpack System")]
-    public GameObject backpackSystem; // for .OpenBackpack()
-    private bool journalUnlocked = false;
+
+
 
     [Header("Coin UI")]
     public GameObject coinFrame;             // Frame 父物体，用于设置显示
@@ -45,12 +44,35 @@ public class PostTreatmentManager1 : MonoBehaviour
     private string[] mentorLines;
     private int dialogueIndex = 0;
 
+
+    void EnsureBackpackSystemExists()
+    {
+        if (BackpackSystemManager.Instance == null)
+        {
+            GameObject prefab = Resources.Load<GameObject>("BackpackSystemManager");
+            if (prefab != null)
+            {
+                Instantiate(prefab);
+            }
+            else
+            {
+                Debug.LogError("❌ BackpackSystemManager prefab not found in Resources.");
+            }
+        }
+    }
+
     void Start()
     {
+
+        EnsureBackpackSystemExists();
+
+        if (BackpackSystemManager.Instance != null)
+            BackpackSystemManager.Instance.InitializeIfNeeded();
+
         mentorLines = new string[] {
             "Excellent work. You've healed two patients and earned <color=red><b>10 gold coins</b></color>.",
             "Keep treating others and gather more coins to travel and collect new herbs.",
-            "Your latest medicine has been recorded in your journal. Press <color=red><b>Tab</b></color> to open your backpack and view it."
+            "Your latest medicine has been recorded in your encyclopedia. Press <color=red><b>Tab</b></color> to open your backpack and view it."
         };
 
         if (GameStateManager.Instance != null)
@@ -64,6 +86,8 @@ public class PostTreatmentManager1 : MonoBehaviour
 
 
         SetupInitialUI();
+
+
     }
 
     void SetupInitialUI()
@@ -186,10 +210,10 @@ public class PostTreatmentManager1 : MonoBehaviour
 
 
 
-        // 打开背包查看图鉴
-        journalUnlocked = true;
-        if (backpackSystem != null)
-            backpackSystem.SendMessage("OpenBackpack", SendMessageOptions.DontRequireReceiver);
+
+        if (BackpackSystemManager.Instance != null)
+            BackpackSystemManager.Instance.OpenBackpack();
+
 
         if (startGameButton != null)
             startGameButton.gameObject.SetActive(true);
@@ -207,10 +231,12 @@ public class PostTreatmentManager1 : MonoBehaviour
                 startGameButton.onClick.Invoke();
         }
 
-        if (journalUnlocked && Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (backpackSystem != null)
-                backpackSystem.SendMessage("OpenBackpack", SendMessageOptions.DontRequireReceiver);
+            if (BackpackSystemManager.Instance != null)
+            {
+                BackpackSystemManager.Instance.OpenBackpack();
+            }
         }
     }
 

@@ -21,7 +21,9 @@ public class TreatmentManager1 : MonoBehaviour
     public Button retryButton;
     public Button continueButton;
     public TMP_Text resultText;
-    public Image successImage;
+    public Image successImage1;
+
+    public Image successImage2;
     public Image failureImage;
 
     [Header("Mentor Dialogue")]
@@ -317,7 +319,17 @@ public class TreatmentManager1 : MonoBehaviour
         treatmentPanel.SetActive(false);
         medicineResultPanel.SetActive(true);
         resultText.text = "Well done! The medicine is ready!";
-        successImage.gameObject.SetActive(true);
+
+        if (isFirstTreatment)
+        {
+            successImage1.gameObject.SetActive(true);
+            successImage2.gameObject.SetActive(false);
+        }
+        else
+        {
+            successImage1.gameObject.SetActive(false);
+            successImage2.gameObject.SetActive(true);
+        }
         failureImage.gameObject.SetActive(false);
         retryButton.gameObject.SetActive(false);
         continueButton.gameObject.SetActive(true);
@@ -333,7 +345,8 @@ public class TreatmentManager1 : MonoBehaviour
         treatmentPanel.SetActive(false);
         medicineResultPanel.SetActive(true);
         resultText.text = "Oh no... The preparation failed.";
-        successImage.gameObject.SetActive(false);
+        successImage1.gameObject.SetActive(false);
+        successImage2.gameObject.SetActive(false);
         failureImage.gameObject.SetActive(true);
         retryButton.gameObject.SetActive(true);
         continueButton.gameObject.SetActive(false);
@@ -366,7 +379,8 @@ public class TreatmentManager1 : MonoBehaviour
 
             // 重置 UI
             continueButton.gameObject.SetActive(false);
-            successImage.gameObject.SetActive(false);
+            successImage1.gameObject.SetActive(false);
+            successImage2.gameObject.SetActive(false);
             medicineResultPanel.SetActive(false);
             diagnosisPanel.SetActive(true);
 
@@ -435,7 +449,7 @@ public class TreatmentManager1 : MonoBehaviour
             if (mentorPortrait != null)
                 mentorPortrait.SetActive(true);
 
-            mentorDialogueText.text = "That’s not the right plant for this illness.";
+            mentorDialogueText.text = "That's not the right plant for this illness.";
             retryPlantSelectionButton.gameObject.SetActive(true);
 
             if (BackpackSystemManager.Instance != null)
