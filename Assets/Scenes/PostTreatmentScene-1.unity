@@ -565,7 +565,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 372761217}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -574,8 +574,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -12, y: -200}
-  m_SizeDelta: {x: 355.8036, y: 355.8036}
+  m_AnchoredPosition: {x: -6.2044, y: -209.2494}
+  m_SizeDelta: {x: 344.2122, y: 337.3012}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &372761220
 CanvasRenderer:
@@ -605,7 +605,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 47c5c3be10f037040946f8b22a3e0f27, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 086abecf2b9af274c96b4ff8a0cc9b92, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1151,9 +1151,12 @@ MonoBehaviour:
   textBackground: {fileID: 1174523324}
   rewardSound: {fileID: 8300000, guid: 312fc5f07d348b04fb81a1da04bf7090, type: 3}
   continueButton: {fileID: 1281571543}
-  backpackSystem: {fileID: 0}
   coinFrame: {fileID: 501142940}
   goldText: {fileID: 888467549}
+  pimpernel: {fileID: 11400000, guid: ad115702ae719504084cdca17df092eb, type: 2}
+  foxglove: {fileID: 11400000, guid: 5186e09a093452b48ad043f16db8be5a, type: 2}
+  ginger: {fileID: 11400000, guid: 72b1ec9019bdddb47913fbc3623e557a, type: 2}
+  codexUIController: {fileID: 0}
 --- !u!1 &558362489
 GameObject:
   m_ObjectHideFlags: 0
@@ -2802,7 +2805,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1850545225}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2811,8 +2814,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 169, y: -200}
-  m_SizeDelta: {x: 355.8036, y: 355.8036}
+  m_AnchoredPosition: {x: 165, y: -218.74585}
+  m_SizeDelta: {x: 323.2449, y: 318.3119}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1850545228
 CanvasRenderer:
@@ -2842,7 +2845,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bb2963ebde0ebab418486f60bd22045e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: dc0a0228985bf224cbb4775fd2f2ab7c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

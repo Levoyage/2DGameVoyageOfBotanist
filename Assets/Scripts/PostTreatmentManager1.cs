@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PostTreatmentManager1 : MonoBehaviour
 {
@@ -34,12 +35,17 @@ public class PostTreatmentManager1 : MonoBehaviour
     public Button continueButton;
 
 
-
-
     [Header("Coin UI")]
     public GameObject coinFrame;             // Frame 父物体，用于设置显示
     public TMP_Text goldText;                // 实际的金币数文本
 
+    [Header("Codex Herbs")]
+    public ItemData pimpernel;
+    public ItemData foxglove;
+    public ItemData ginger;
+
+    [Header("Codex UI Controller")]
+    public CodexUIController codexUIController;
 
     private string[] mentorLines;
     private int dialogueIndex = 0;
@@ -69,6 +75,16 @@ public class PostTreatmentManager1 : MonoBehaviour
         if (BackpackSystemManager.Instance != null)
             BackpackSystemManager.Instance.InitializeIfNeeded();
 
+        // 🔥 加载图鉴，并添加新 herb
+        var codexUI = FindObjectOfType<CodexUIController>();
+        if (codexUI != null)
+        {
+            var list = new List<ItemData>(codexUI.knownHerbs);
+            if (!list.Contains(foxglove)) list.Add(foxglove);
+            if (!list.Contains(ginger)) list.Add(ginger);
+            codexUI.knownHerbs = list;
+        }
+
         mentorLines = new string[] {
             "Excellent work. You've healed two patients and earned <color=red><b>10 gold coins</b></color>.",
             "Keep treating others and gather more coins to travel and collect new herbs.",
@@ -88,7 +104,35 @@ public class PostTreatmentManager1 : MonoBehaviour
         SetupInitialUI();
 
 
+        if (BackpackSystemManager.Instance != null)
+            BackpackSystemManager.Instance.InitializeIfNeeded();
+
+        StartCoroutine(AddCodexEntriesWhenReady());   // ← 新协程
+
     }
+
+    IEnumerator AddCodexEntriesWhenReady()
+    {
+        // ① 等到场景里真有 CodexUIController（含 inactive）
+        yield return new WaitUntil(() => FindObjectOfType<CodexUIController>(true) != null);
+
+        CodexUIController codex = FindObjectOfType<CodexUIController>(true);
+
+        if (codex == null)
+        {
+            Debug.LogError("[PostTreatment] CodexUIController still missing!");
+            yield break;
+        }
+
+        // ② 组装新增条目（空引用自动过滤）
+        var toAdd = new List<ItemData>();
+        if (foxglove != null) toAdd.Add(foxglove);
+        if (ginger != null) toAdd.Add(ginger);
+
+        codex.AddNewEntries(toAdd);   // ← 自动去重并刷新 UI
+        Debug.Log($"[PostTreatment] 已向图鉴追加 {toAdd.Count} 种草药");
+    }
+
 
     void SetupInitialUI()
     {

@@ -2,6 +2,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
+using System.Collections;
 
 public class ClinicManager : MonoBehaviour
 {
@@ -59,6 +61,7 @@ public class ClinicManager : MonoBehaviour
     public ItemData gingerItemData;
 
 
+    public ItemData pimpernel;
 
 
     private string[] herbIntroLines = {
@@ -87,6 +90,7 @@ public class ClinicManager : MonoBehaviour
     private string mentorIntroLine1 = "You've done well with simple cases. But this time, two patients await. Diagnose carefully and gather the herbs yourself.";
     private string mentorIntroLine2 = "Each choice matters — trust your knowledge, and give them the best chance at healing.";
     private string mentorQuestion = "What is your diagnosis, apprentice?";
+
 
     private int herbIntroIndex = 0;
     private int patientDialogueIndex = 0;
@@ -126,6 +130,9 @@ public class ClinicManager : MonoBehaviour
         {
             BackpackSystemManager.Instance.InitializeIfNeeded();
         }
+
+        StartCoroutine(SetUpCodexAfterInit());
+
 
         introDialogueBubble.SetActive(true);
         mentorDialogueBubble.SetActive(false);
@@ -488,4 +495,28 @@ public class ClinicManager : MonoBehaviour
 
         SceneManager.LoadScene("FieldScene-1");
     }
+
+    private IEnumerator SetUpCodexAfterInit()
+    {
+        // ① 等 1 帧，确保 BackpackUI Prefab 真正实例化完毕
+        yield return null;
+
+        // ② 保险：搜 inactive 也算
+        CodexUIController codex = FindObjectOfType<CodexUIController>(true);
+        if (codex == null)
+        {
+            Debug.LogError("[ClinicManager] CodexUIController NOT found after initialization!");
+            yield break;
+        }
+
+        if (pimpernel == null)
+        {
+            Debug.LogError("[ClinicManager] ✖ pimpernel 为空，记得在 Inspector 把 ScriptableObject 拖进来！");
+            yield break;
+        }
+
+        codex.SetKnownHerbs(new List<ItemData> { pimpernel });
+        Debug.Log("[ClinicManager] 初始图鉴已设为 Pimpernel");
+    }
+
 }
