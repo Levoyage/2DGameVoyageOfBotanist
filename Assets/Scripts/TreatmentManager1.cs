@@ -74,6 +74,11 @@ public class TreatmentManager1 : MonoBehaviour
 
     public Button retryPlantSelectionButton; // 🆕 选择植物失败的 Retry 按钮
 
+    [Header("First Backpack Overlay")]
+    public GameObject firstBackpackOverlay;    // 根对象（整个遮罩 UI）
+    public GameObject bubbleHintObject;        // 文字泡泡对象
+
+
     public static TreatmentManager1 Instance { get; private set; }
 
 
@@ -216,6 +221,12 @@ public class TreatmentManager1 : MonoBehaviour
 
             if (backpackPromptBubble != null)
                 backpackPromptBubble.SetActive(false);
+
+            // ✅ 第一次打开背包，显示遮罩和提示
+            if (firstBackpackOverlay != null)
+                firstBackpackOverlay.SetActive(true);
+            if (bubbleHintObject != null)
+                bubbleHintObject.SetActive(true);
         }
     }
 
@@ -363,7 +374,7 @@ public class TreatmentManager1 : MonoBehaviour
         }
         else
         {
-            SceneManager.LoadScene("PostTreatmentScene");
+            SceneManager.LoadScene("PostTreatmentScene-1");
         }
     }
 
@@ -410,6 +421,12 @@ public class TreatmentManager1 : MonoBehaviour
             if (BackpackSystemManager.Instance != null)
                 BackpackSystemManager.Instance.CloseBackpack();
 
+            if (firstBackpackOverlay != null)
+                firstBackpackOverlay.SetActive(false);
+            if (bubbleHintObject != null)
+                bubbleHintObject.SetActive(false);
+
+
         }
         else
         {
@@ -423,6 +440,12 @@ public class TreatmentManager1 : MonoBehaviour
 
             if (BackpackSystemManager.Instance != null)
                 BackpackSystemManager.Instance.CloseBackpack();
+
+            if (firstBackpackOverlay != null)
+                firstBackpackOverlay.SetActive(false);
+            if (bubbleHintObject != null)
+                bubbleHintObject.SetActive(false);
+
 
         }
     }

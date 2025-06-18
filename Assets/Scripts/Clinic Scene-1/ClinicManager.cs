@@ -85,7 +85,7 @@ public class ClinicManager : MonoBehaviour
     private string[] patient2DiagnosisOptions = { "Nausea", "Migraine", "Food Poisoning" };
 
     private string mentorIntroLine1 = "You've done well with simple cases. But this time, two patients await. Diagnose carefully and gather the herbs yourself.";
-    private string mentorIntroLine2 = "If you fail to collect the herbs, <color=red><b>there will be no second chances</b></color> — choose wisely, or their fates may be sealed.";
+    private string mentorIntroLine2 = "Each choice matters — trust your knowledge, and give them the best chance at healing.";
     private string mentorQuestion = "What is your diagnosis, apprentice?";
 
     private int herbIntroIndex = 0;

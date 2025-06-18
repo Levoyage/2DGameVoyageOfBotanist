@@ -22,8 +22,8 @@ public class PostTreatmentManager : MonoBehaviour
     public GameObject rewardUIPanel;
     public GameObject textBackground;
 
-    [Header("Economy HUD")]
-    public GameObject economyUIObject; // GameObject with EconomyUIController
+
+
 
     [Header("Audio")]
     public AudioClip rewardSound;
@@ -34,6 +34,10 @@ public class PostTreatmentManager : MonoBehaviour
 
     [Header("Post-Treatment Continue")]
     public Button continueButton;
+
+    [Header("UI Elements")]
+    public GameObject coinFrame; // 拖入 CoinFrame
+
 
     private Coroutine rewardCoroutine;
 
@@ -121,6 +125,10 @@ public class PostTreatmentManager : MonoBehaviour
             continueButton.onClick.AddListener(ShowFinalMentorLines);
         }
 
+        if (coinFrame != null)
+            coinFrame.SetActive(false);
+
+
     }
 
     void ShowTutorDialogue()
@@ -180,12 +188,7 @@ public class PostTreatmentManager : MonoBehaviour
         if (textBackground != null)
             textBackground.SetActive(false);
 
-        if (economyUIObject != null)
-        {
-            var econ = economyUIObject.GetComponent<EconomyUIController>();
-            if (econ != null)
-                econ.ShowHUD();
-        }
+
 
         dialogueIndex = 0;
         ShowMentorLine();
@@ -241,6 +244,10 @@ public class PostTreatmentManager : MonoBehaviour
 
         if (continueButton != null)
             continueButton.gameObject.SetActive(false);  // 隐藏自己
+
+        if (coinFrame != null)
+            coinFrame.SetActive(true);
+
 
         ShowMentorLine(); // 🔁 使用原有 mentor line 系统展示台词
 
