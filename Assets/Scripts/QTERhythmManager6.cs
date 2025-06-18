@@ -41,6 +41,8 @@ public class QTERhythmManager6 : MonoBehaviour
     private int _index;                         // current position in sequence
     private float _timer;
     private bool _active;
+    private bool[] promptSuccess;     // 每个 prompt 是否已完成
+
 
     void Awake()
     {
@@ -58,6 +60,9 @@ public class QTERhythmManager6 : MonoBehaviour
             Debug.LogError("[QTE‑6] Need exactly 6 prompts + 6 key codes!");
             return;
         }
+
+        promptSuccess = new bool[prompts.Count];     // ← NEW
+        for (int i = 0; i < promptSuccess.Length; i++) promptSuccess[i] = false;
 
         _index = 0;
         _timer = 0f;
@@ -92,7 +97,8 @@ public class QTERhythmManager6 : MonoBehaviour
             if (Input.GetKeyDown(keySequence[_index]))
             {
                 Play(hitSound);
-                prompts[_index].color = Color.green; // mark correct
+                promptSuccess[_index] = true;                // ← NEW：记录成功
+                prompts[_index].color = Color.green;         // 立即变绿
                 _index++;
                 if (_index >= keySequence.Count)
                     Finish(true);
@@ -123,7 +129,14 @@ public class QTERhythmManager6 : MonoBehaviour
     void UpdatePromptHighlight()
     {
         for (int i = 0; i < prompts.Count; i++)
-            prompts[i].color = (i == _index) ? Color.yellow : Color.white;
+        {
+            if (promptSuccess[i])                       // 已完成 → 绿
+                prompts[i].color = Color.green;
+            else
+                prompts[i].color = (i == _index)        // 当前 → 黄
+                                  ? Color.yellow
+                                  : Color.white;        // 其他 → 白
+        }
     }
 
     void ShowPrompts()

@@ -65,7 +65,7 @@ public class ClinicManager : MonoBehaviour
 
 
     private string[] herbIntroLines = {
-        "From now on, you'll carry your own <color=red><b>satchel</b></color> for herbs. Keep it tidy.",
+        "From now on, you'll c your own <color=red><b>satchel</b></color> for herbs. Keep it tidy.",
         "We've also compiled an <color=red><b>encyclopedia</b></color> for the plants you find.",
         "Check it often — knowledge saves lives."
     };
