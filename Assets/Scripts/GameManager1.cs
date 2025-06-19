@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class GameManager1 : MonoBehaviour
 {
@@ -80,7 +81,10 @@ public class GameManager1 : MonoBehaviour
         playerController = player.GetComponent<PlayerController>();
 
         if (playerController != null)
+        {
             playerController.canMove = false;
+            playerController.SetFacingDown();
+        }
 
         currentLives = maxLives;
         UpdateHeartsUI();
@@ -213,8 +217,35 @@ public class GameManager1 : MonoBehaviour
             display += $"{requiredPlants[i].itemName}: {count}/1";
             if (i < requiredPlants.Length - 1) display += ", ";
         }
+
+        // 添加植物提示
+        bool hasFoxglove = false;
+        bool hasGinger = false;
+
+        foreach (var plant in requiredPlants)
+        {
+            string name = plant.itemName.ToLower();
+            if (name.Contains("foxglove")) hasFoxglove = true;
+            if (name.Contains("ginger")) hasGinger = true;
+        }
+
+        if (hasFoxglove && hasGinger)
+        {
+            display += "\n(Look for tall pink bells; also look for a bulbous root near the soil!)";
+        }
+        else
+        {
+            if (hasFoxglove)
+                display += "\n(Look for tall pink bells!)";
+            if (hasGinger)
+                display += "\n(Look for a bulbous root near the soil!)";
+        }
+
+
         taskDisplay.text = display;
     }
+
+
 
     bool CheckCollectedAll()
     {

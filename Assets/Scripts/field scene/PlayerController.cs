@@ -86,6 +86,14 @@ public class PlayerController : MonoBehaviour
         Invoke("ResetSpeed", duration); // Reset speed after duration
     }
 
+    public void SetFacingDown()
+    {
+        lastMoveDirection = Vector2.down;
+        animator.SetFloat("MoveX", 0f);
+        animator.SetFloat("MoveY", -1f);
+    }
+
+
     void ResetSpeed()
     {
         moveSpeed = originalMoveSpeed; // Reset to original speed

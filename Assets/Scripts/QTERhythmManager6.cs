@@ -151,6 +151,7 @@ public class QTERhythmManager6 : MonoBehaviour
 
     void Play(AudioClip clip)
     {
-        if (clip) _audio.PlayOneShot(clip);
+        if (clip != null)
+            AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position, 1f);
     }
 }

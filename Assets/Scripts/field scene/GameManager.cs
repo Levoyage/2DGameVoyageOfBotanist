@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    [SerializeField] private GameObject instructionImage;
+    [SerializeField] private Button continueButton;
     public TextMeshProUGUI taskText;
     public Image taskTextBackground;
     public TextMeshProUGUI timerText;
@@ -113,23 +115,54 @@ public class GameManager : MonoBehaviour
 
     void ResetUIElements()
     {
-        taskText.text = $"Find the <b><color=red>{requiredPlant.itemName}</color></b> in 2 minutes to finish the potion!";
-        taskText.gameObject.SetActive(true);
-        taskTextBackground.gameObject.SetActive(true);
+
+        if (instructionImage != null)
+            instructionImage.SetActive(true);
+
+        if (continueButton != null)
+            continueButton.gameObject.SetActive(true);
+
+        taskText.text = $"Find the <b><color=red>{requiredPlant.itemName}</color></b> in <color=red><b>2 minutes</b></color> to finish the potion!";
+        taskText.gameObject.SetActive(false);
+        taskTextBackground.gameObject.SetActive(false);
 
         timerText.gameObject.SetActive(false);
         resultText.gameObject.SetActive(false);
         taskDisplay.gameObject.SetActive(false);
         restartButton.gameObject.SetActive(false);
 
-        startButton.gameObject.SetActive(true);
+        startButton.gameObject.SetActive(false);
 
         startButton.onClick.RemoveAllListeners();
         startButton.onClick.AddListener(StartGame);
 
         restartButton.onClick.RemoveAllListeners();
         restartButton.onClick.AddListener(RestartGame);
+
+        continueButton.onClick.RemoveAllListeners();
+        continueButton.onClick.AddListener(OnContinueClicked);
+
     }
+
+    private void OnContinueClicked()
+    {
+        if (instructionImage != null)
+            instructionImage.SetActive(false);
+
+        if (continueButton != null)
+            continueButton.gameObject.SetActive(false);
+
+        if (taskTextBackground != null)
+            taskTextBackground.gameObject.SetActive(true);
+
+
+        if (taskText != null)
+            taskText.gameObject.SetActive(true);
+
+        if (startButton != null)
+            startButton.gameObject.SetActive(true);
+    }
+
 
     void StartGame()
     {
