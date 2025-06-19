@@ -87,6 +87,13 @@ public class BackpackSystemManager : MonoBehaviour
                         {
                             cm.OnBackpackClosedByButton();
                         }
+
+                        PostTreatmentManager1 pm = FindObjectOfType<PostTreatmentManager1>();
+                        if (pm != null)
+                        {
+                            pm.OnBackpackClosedByButton();
+                        }
+
                         CloseBackpack();
                     });
                     Debug.Log("🔗 CloseButton bound to ClinicManager.OnBackpackClosedByButton()");

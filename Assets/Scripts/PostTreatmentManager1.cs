@@ -19,7 +19,6 @@ public class PostTreatmentManager1 : MonoBehaviour
     public GameObject tutorBubble;
     public TMP_Text tutorText;
     public Button tutorNextButton;
-    public Button startGameButton;
     public Button backButton;
 
     [Header("Reward UI")]
@@ -47,8 +46,24 @@ public class PostTreatmentManager1 : MonoBehaviour
     [Header("Codex UI Controller")]
     public CodexUIController codexUIController;
 
+    [Header("First Backpack Overlay")]
+    public GameObject selectionOverlay;    // 根对象（整个遮罩 UI）
+    public Button overlayContinueButton;        // 气泡内的继续按钮
+    public GameObject tabCloseInstruction;
+
+    [Header("Map Button")]
+    public Button mapButton;
+
+    private readonly string[] mentorAfterCodex = {
+    "Every time you successfully craft a medicine, the plant will be added to your encyclopedia.",
+    "And you can spend your coins to travel farther and discover new plants.",
+    "Let's open the map and plan our next journey."
+};
+    private int afterCodexIndex = 0;
+
     private string[] mentorLines;
     private int dialogueIndex = 0;
+    private bool overlayStage = false;
 
 
     void EnsureBackpackSystemExists()
@@ -88,7 +103,7 @@ public class PostTreatmentManager1 : MonoBehaviour
         mentorLines = new string[] {
             "Excellent work. You've healed two patients and earned <color=red><b>10 gold coins</b></color>.",
             "Keep treating others and gather more coins to travel and collect new herbs.",
-            "Your latest medicine has been recorded in your encyclopedia. Press <color=red><b>Tab</b></color> to open your backpack and view it."
+            "Your latest medicine has been recorded in your encyclopedia. <color=red><b>Press Tab</b></color> to open your backpack and view it."
         };
 
         if (GameStateManager.Instance != null)
@@ -108,6 +123,9 @@ public class PostTreatmentManager1 : MonoBehaviour
             BackpackSystemManager.Instance.InitializeIfNeeded();
 
         StartCoroutine(AddCodexEntriesWhenReady());   // ← 新协程
+
+        if (selectionOverlay != null) selectionOverlay.SetActive(false); // 确保遮罩初始隐藏
+        if (tabCloseInstruction != null) tabCloseInstruction.SetActive(false); // 提示初始隐藏
 
     }
 
@@ -136,6 +154,7 @@ public class PostTreatmentManager1 : MonoBehaviour
 
     void SetupInitialUI()
     {
+
         // 显示两个病人
         if (patient1Portrait != null) patient1Portrait.SetActive(true);
         if (patient2Portrait != null) patient2Portrait.SetActive(true);
@@ -163,12 +182,9 @@ public class PostTreatmentManager1 : MonoBehaviour
         rewardUIPanel.SetActive(false);
         textBackground.SetActive(false);
         continueButton.gameObject.SetActive(false);
-        startGameButton.gameObject.SetActive(false);
         backButton.gameObject.SetActive(false);
+        mapButton.gameObject.SetActive(false);
 
-        // 绑定 continue 按钮
-        continueButton.onClick.RemoveAllListeners();
-        continueButton.onClick.AddListener(ShowFinalMentorLines);
 
         // 绑定 tutor 按钮
         tutorNextButton.onClick.RemoveAllListeners();
@@ -229,6 +245,11 @@ public class PostTreatmentManager1 : MonoBehaviour
         backButton.gameObject.SetActive(dialogueIndex > 0);
         tutorNextButton.gameObject.SetActive(dialogueIndex < mentorLines.Length - 1);
         continueButton.gameObject.SetActive(dialogueIndex == mentorLines.Length - 1);
+        if (dialogueIndex == mentorLines.Length - 1)
+        {
+            continueButton.onClick.RemoveAllListeners();
+            continueButton.onClick.AddListener(ShowFinalMentorLines);
+        }
 
         tutorNextButton.onClick.RemoveAllListeners();
         tutorNextButton.onClick.AddListener(() =>
@@ -250,18 +271,23 @@ public class PostTreatmentManager1 : MonoBehaviour
         continueButton.gameObject.SetActive(false);
         tutorBubble.SetActive(false);
 
-        goldText.text = GameStateManager.Instance.gold.ToString();//refresh gold UI to 10
+        goldText.text = GameStateManager.Instance.gold.ToString();
+
+        //确保遮罩与 Tab 提示此时仍隐藏
+        if (selectionOverlay != null)
+            selectionOverlay.SetActive(false);
+        if (tabCloseInstruction != null)
+            tabCloseInstruction.SetActive(false);
+
+        // 重置阶段标记：第一次 Tab 用来打开背包
+        overlayStage = false;
+
+        //防止导师台词再次循环
+        dialogueIndex = mentorLines.Length;
 
 
-
-
-        if (BackpackSystemManager.Instance != null)
-            BackpackSystemManager.Instance.OpenBackpack();
-
-
-        if (startGameButton != null)
-            startGameButton.gameObject.SetActive(true);
     }
+
 
     void Update()
     {
@@ -271,21 +297,92 @@ public class PostTreatmentManager1 : MonoBehaviour
                 tutorNextButton.onClick.Invoke();
             else if (continueButton != null && continueButton.gameObject.activeInHierarchy)
                 continueButton.onClick.Invoke();
-            else if (startGameButton != null && startGameButton.gameObject.activeInHierarchy)
-                startGameButton.onClick.Invoke();
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (BackpackSystemManager.Instance != null)
+            // ---------- 第一次按 Tab：背包关闭 → 打开背包 + 遮罩 ----------
+            if (!overlayStage && BackpackSystemManager.Instance != null && !BackpackSystemManager.Instance.IsBackpackOpen())
             {
                 BackpackSystemManager.Instance.OpenBackpack();
+
+                // 显示遮罩并绑定按钮
+                if (selectionOverlay != null) selectionOverlay.SetActive(true);
+
+                if (overlayContinueButton != null)
+                {
+                    overlayContinueButton.onClick.RemoveAllListeners();
+                    overlayContinueButton.onClick.AddListener(() =>
+                    {
+                        if (selectionOverlay != null) selectionOverlay.SetActive(false);
+                        if (tabCloseInstruction != null)
+                        {
+                            tabCloseInstruction.SetActive(true);
+                            tabCloseInstruction.transform.SetAsLastSibling(); // 保证最前
+                        }
+                        overlayStage = true;          // 进入第二阶段
+                    });
+                }
+                return; // 首次按 Tab 后不立即跳关
             }
+
+            // ---------- 第二次按 Tab：overlayStage 为 true ----------
+            if (overlayStage && BackpackSystemManager.Instance != null && BackpackSystemManager.Instance.IsBackpackOpen())
+            {
+                BackpackSystemManager.Instance.CloseBackpack();
+                if (tabCloseInstruction != null && tabCloseInstruction.activeInHierarchy)
+                {
+                    tabCloseInstruction.SetActive(false);
+                    ShowAfterCodexDialogue();   // ← 进入第二段导师对白
+                }
+            }
+
         }
     }
 
-    public void StartMainGame()
+    public void OnBackpackClosedByButton()
     {
-        SceneManager.LoadScene("ClinicScene-1");
+        if (overlayStage && tabCloseInstruction != null && tabCloseInstruction.activeInHierarchy)
+        {
+            tabCloseInstruction.SetActive(false);
+            ShowAfterCodexDialogue();
+        }
+    }
+
+    void ShowAfterCodexDialogue()
+    {
+        overlayStage = false;           // 不再响应 Tab-to-nextScene
+
+        tutorBubble.SetActive(true);
+        tutorText.text = mentorAfterCodex[afterCodexIndex];
+
+        tutorNextButton.gameObject.SetActive(afterCodexIndex < mentorAfterCodex.Length - 1);
+        backButton.gameObject.SetActive(afterCodexIndex > 0);
+        mapButton.gameObject.SetActive(afterCodexIndex == mentorAfterCodex.Length - 1);
+
+        tutorNextButton.onClick.RemoveAllListeners();
+        tutorNextButton.onClick.AddListener(() =>
+        {
+            afterCodexIndex++;
+            ShowAfterCodexDialogue();
+        });
+
+        backButton.onClick.RemoveAllListeners();
+        backButton.onClick.AddListener(() =>
+        {
+            afterCodexIndex = Mathf.Max(0, afterCodexIndex - 1);
+            ShowAfterCodexDialogue();
+        });
+
+        if (mapButton != null)
+        {
+            mapButton.onClick.RemoveAllListeners();
+            mapButton.onClick.AddListener(OpenMapScene);
+        }
+    }
+
+    void OpenMapScene()
+    {
+        SceneManager.LoadScene("MapScene");   // 先建一个空场景命名 MapScene
     }
 }
