@@ -8,13 +8,22 @@ public class ConditionalBGM : MonoBehaviour
     private AudioSource audioSource;
     public float fadeDuration = 2f; // time in seconds for fade out/in
 
+    private static ConditionalBGM instance;
+
     void Awake()
     {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject); // avoid duplicate
+            return;
+        }
+
+        instance = this;
         DontDestroyOnLoad(gameObject);
         audioSource = GetComponent<AudioSource>();
-
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
+
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -44,11 +53,12 @@ public class ConditionalBGM : MonoBehaviour
 
     IEnumerator FadeIn()
     {
-        if (!audioSource.isPlaying)
-            audioSource.UnPause();
-
-        float targetVolume = 0.6f; // or your default volume
+        float targetVolume = 0.6f; // your preferred volume
         float startVolume = audioSource.volume;
+
+        // ✅ 不再重播，只在未播放时才播放
+        if (!audioSource.isPlaying)
+            audioSource.Play();
 
         for (float t = 0; t < fadeDuration; t += Time.deltaTime)
         {
@@ -58,6 +68,7 @@ public class ConditionalBGM : MonoBehaviour
 
         audioSource.volume = targetVolume;
     }
+
 
     void OnDestroy()
     {
