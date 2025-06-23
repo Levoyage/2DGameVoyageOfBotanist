@@ -25,6 +25,9 @@ public class SnakeController : MonoBehaviour
 
     public bool canMove = false; // ✅ 新增：由GameManager控制何时开始移动
 
+    private bool isChasingPlayer = false;
+
+
     public void SaveInitialPosition()
     {
         initialPosition = transform.position;
@@ -70,6 +73,11 @@ public class SnakeController : MonoBehaviour
     {
         moveTimer -= Time.deltaTime;
 
+        if (isChasingPlayer && player != null)
+        {
+            moveDirection = (player.position - transform.position).normalized;
+        }
+
         rb.velocity = moveDirection * moveSpeed;
 
         animator.SetFloat("MoveX", moveDirection.x);
@@ -99,6 +107,7 @@ public class SnakeController : MonoBehaviour
         }
     }
 
+
     void IdleSnake()
     {
         idleTimer -= Time.deltaTime;
@@ -109,24 +118,28 @@ public class SnakeController : MonoBehaviour
             {
                 float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
-                if (distanceToPlayer <= detectionRange)
+                if (distanceToPlayer <= 10f) // 追踪距离可以根据难度调整
                 {
                     moveDirection = (player.position - transform.position).normalized;
+                    isChasingPlayer = true;
                 }
                 else
                 {
                     ChooseRandomDirection();
+                    isChasingPlayer = false;
                 }
             }
             else
             {
                 ChooseRandomDirection();
+                isChasingPlayer = false;
             }
 
-            moveTimer = Random.Range(moveDurationMin, moveDurationMax);
+            moveTimer = isChasingPlayer ? 2f : Random.Range(moveDurationMin, moveDurationMax); // 追踪时可以设定固定时间
             isMoving = true;
         }
     }
+
 
     void ChooseRandomDirection()
     {

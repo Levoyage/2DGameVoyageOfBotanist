@@ -14,7 +14,7 @@ public class IntroManager : MonoBehaviour
     private string[] introLines = {
         "Provence, France, late 18th century...",
         "You have arrived at the small countryside clinic.",
-        "Dr. Madeleine Fournier welcomes you inside.",
+        "Dr. Marianne North welcomes you inside.",
         "Your training as an apprentice physician begins today.",
         "Now, a patient comes..."
     };
