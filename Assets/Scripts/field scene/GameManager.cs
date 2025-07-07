@@ -309,21 +309,23 @@ public class GameManager : MonoBehaviour
 
     void RestartGame()
     {
-        if (player != null)
+        // ✅ 1️⃣ 尝试复用现有的 Player
+        if (PlayerInventory.Instance != null)
         {
-            Destroy(player);
+            player = PlayerInventory.Instance.gameObject;
         }
 
-        player = Instantiate(playerPrefab);
+        // ✅ 2️⃣ 极端情况（第一次运行或异常销毁）才重新生成
+        if (player == null)
+        {
+            player = Instantiate(playerPrefab);
+            DontDestroyOnLoad(player);
+        }
+
         player.tag = "Player";
         player.name = "Player";
 
-        StartCoroutine(CheckIfPlayerSurvives()); // 👈 检查是否被删了
-
         tileManager.player = player.transform;
-
-        Debug.Log("✅ PLAYER INSTANTIATED: " + player.name);
-
 
         mapGenerator.GenerateMap();
 
@@ -345,6 +347,7 @@ public class GameManager : MonoBehaviour
 
         InitializeGameState();
     }
+
 
     void PlaySound(AudioClip clip)
     {
