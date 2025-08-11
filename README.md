@@ -1,6 +1,6 @@
 # 🌿 Voyage of the Botanist — An Educational Game Demo on Medicinal Plants
 
-> 🎓 A graduation project exploring **game-based learning** for herbal medicine education, developed in Unity.
+> A graduation project exploring **game-based learning** for herbal medicine education, developed in Unity.
 
 ## 🎮 Play the Game
 
@@ -20,29 +20,29 @@ This project investigates the potential of **interactive digital games** to supp
 
 ## 🛠️ Features
 
-- 🔍 **Exploration-Based Plant Collection**  
+- **Exploration-Based Plant Collection**  
   Navigate through multiple regions and collect diverse herbs.
 
-- 🧪 **Mini-Games for Preparation**  
+- **Mini-Games for Preparation**  
   Interact with ingredients through boiling, grinding, and mixing mechanics.
 
-- 👩‍⚕️ **Patient Treatment via QTE**  
+- **Patient Treatment via QTE**  
   Apply your knowledge to treat in-game characters using QTEs.
 
-- 📚 **Unlockable Plant Encyclopedia**  
+- **Unlockable Plant Encyclopedia**  
   A growing collection of learned herbs is tracked in a backpack system.
 
-- 🗺️ **Multi-Scene Game Structure**  
+- **Multi-Scene Game Structure**  
   Includes instructional, treatment, post-treatment, and map scenes.
 
 ---
 
 ## 💡 Technologies Used
 
-- 🎮 Unity (C#)
-- 🖼️ DALL·E 3 (Image generation)
-- 🎵 Free audio and tiles from [@RyiSnow](https://www.youtube.com/@RyiSnow)
-- 🧪 Google Forms (User research questionnaire)
+- Unity (C#)
+- DALL·E 3 (Image generation)
+- Free audio and tiles from [@RyiSnow](https://www.youtube.com/@RyiSnow)
+- Google Forms (User research questionnaire)
 
 ---
 
