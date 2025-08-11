@@ -46,3 +46,19 @@ This project investigates the potential of **interactive digital games** to supp
 
 ---
 
+## 📈 Future Work
+Add support for additional countries/regions (e.g., Spain)
+
+Localize the game into Chinese and other languages
+
+Expand the variety of herbs and mini-game challenges
+
+Conduct more user studies for educational validation
+
+---
+
+## 📜 License
+This project is developed for academic and non-commercial purposes.
+Please cite or reference appropriately if using assets or concepts.
+
+
