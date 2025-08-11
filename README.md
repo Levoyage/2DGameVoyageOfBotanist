@@ -1,4 +1,4 @@
-# 🌿 Herbal Healing — An Educational Game on Medicinal Plants
+# 🌿 Voyage of the Botanist — An Educational Game Demo on Medicinal Plants
 
 > 🎓 A graduation project exploring **game-based learning** for herbal medicine education, developed in Unity.
 
